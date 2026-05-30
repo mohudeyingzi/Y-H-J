@@ -1,0 +1,25 @@
+{
+  "id": "session-1779767784900-sxm8y4",
+  "name": "钢锭锯切工具",
+  "status": "active",
+  "createdAt": "2026-05-26T04:24:47.214Z",
+  "updatedAt": "2026-05-26T05:30:05.072Z",
+  "agents": [
+    {
+      "id": "agent_tp8ppgkb",
+      "name": "Main Agent",
+      "role": "assistant",
+      "status": "idle",
+      "createdAt": "2026-05-26T04:24:47.214Z",
+      "model": "unknown",
+      "systemPrompt": ""
+    }
+  ],
+  "summary": {
+    "id": "summary_le3rrtsi",
+    "title": "钢锭锯切工具",
+    "createdAt": "2026-05-26T04:24:47.214Z",
+    "file": "summary_le3rrtsi.md"
+  },
+  "lastMessageCount": 36
+}

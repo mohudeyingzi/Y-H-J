@@ -1,0 +1,25 @@
+{
+  "id": "session-1778721957997-uuys8g",
+  "name": "CAD图纸识别优化",
+  "status": "active",
+  "createdAt": "2026-05-15T08:48:25.741Z",
+  "updatedAt": "2026-05-16T00:16:48.369Z",
+  "agents": [
+    {
+      "id": "agent_2o1wz9dh",
+      "name": "Main Agent",
+      "role": "assistant",
+      "status": "idle",
+      "createdAt": "2026-05-15T08:48:25.741Z",
+      "model": "unknown",
+      "systemPrompt": ""
+    }
+  ],
+  "summary": {
+    "id": "summary_uisv4zid",
+    "title": "CAD图纸识别优化",
+    "createdAt": "2026-05-15T08:48:25.741Z",
+    "file": "summary_uisv4zid.md"
+  },
+  "lastMessageCount": 91
+}

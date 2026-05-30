@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>锻件算重报价系统</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #f5f5f5; padding: 10px; font-size: 13px; }
+h1 { text-align: center; font-size: 20px; margin: 10px 0; color: #333; }
+table { border-collapse: collapse; width: 100%; background: #fff; margin-bottom: 8px; }
+th, td { border: 1px solid #999; padding: 4px 6px; text-align: center; vertical-align: middle; }
+th { background: #e8e8e8; font-weight: bold; font-size: 12px; white-space: nowrap; }
+.section-title { background: #d0e8ff !important; font-weight: bold; color: #003366; }
+.sub-title { background: #f0f0f0 !important; font-weight: normal; color: #555; }
+input[type="text"], input[type="number"] { width: 90%; padding: 2px 4px; border: 1px solid #ccc; border-radius: 2px; font-size: 12px; text-align: center; }
+input:focus { outline: 2px solid #4a90d9; border-color: #4a90d9; }
+select { width: 95%; padding: 2px; border: 1px solid #ccc; border-radius: 2px; font-size: 12px; }
+.btn { padding: 6px 18px; cursor: pointer; border: none; border-radius: 4px; font-size: 14px; font-weight: bold; margin: 4px 6px; }
+.btn-calc { background: #28a745; color: #fff; }
+.btn-calc:hover { background: #218838; }
+.btn-reset { background: #dc3545; color: #fff; }
+.btn-reset:hover { background: #c82333; }
+.btn-add { background: #17a2b8; color: #fff; font-size: 11px; padding: 3px 10px; margin: 1px; }
+.btn-del { background: #dc3545; color: #fff; font-size: 11px; padding: 3px 8px; margin: 1px; }
+.result-row { background: #fffde7 !important; font-weight: bold; }
+.formula-cell { color: #666; font-size: 11px; word-break: break-all; }
+.total-section { background: #e8f5e9 !important; }
+.highlight { color: #c00; font-weight: bold; }
+.note { color: #888; font-size: 11px; }
+.container { max-width: 1400px; margin: 0 auto; overflow-x: auto; }
+.action-bar { text-align: center; margin: 10px 0; padding: 8px; background: #fff; border-radius: 4px; }
+@media (max-width: 768px) {
+  body { padding: 4px; font-size: 11px; }
+  th, td { padding: 2px 3px; min-width: 50px; }
+  input[type="text"], input[type="number"] { width: 85%; font-size: 11px; }
+  .btn { padding: 4px 12px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔨 锻件算重报价系统</h1>
+
+<!-- ====== 顶部信息栏 ====== -->
+<table id="headerTable">
+<tr>
+  <th style="width:11%">客户名称</th>
+  <th style="width:10%">名称</th>
+  <th style="width:9%">型号</th>
+  <th style="width:9%">图号</th>
+  <th style="width:7%">单重(KG)</th>
+  <th style="width:6%">数量</th>
+  <th style="width:9%">单价(元/KG)</th>
+  <th style="width:8%">总重(KG)</th>
+  <th style="width:9%">总价</th>
+  <th style="width:22%">添加</th>
+</tr>
+<tr>
+  <td><input type="text" id="customer" placeholder="(手动输入)"></td>
+  <td><input type="text" id="productName" placeholder="(手动输入)"></td>
+  <td><input type="text" id="model" placeholder="(手动输入)"></td>
+  <td><input type="text" id="drawingNo" placeholder="(手动输入)"></td>
+  <td><input type="number" id="unitWeight" step="0.01" placeholder="(手动输入)" readonly style="background:#f0f0f0;color:#666;"></td>
+  <td><input type="number" id="quantity" value="1" min="1" placeholder="(手动输入)"></td>
+  <td><input type="number" id="unitPrice" step="0.01" placeholder="(手动输入)"></td>
+  <td><input type="number" id="totalWeight" step="0.01" readonly style="background:#f0f0f0;color:#c00;font-weight:bold;"></td>
+  <td><input type="number" id="totalPrice" step="0.01" readonly style="background:#f0f0f0;color:#c00;font-weight:bold;"></td>
+  <td class="note">(自动生成)</td>
+</tr>
+</table>
+
+<!-- ====== 精尺寸圆柱 ====== -->
+<table id="cylinderTable">
+<tr>
+  <th colspan="10" class="section-title">精尺寸圆柱
+    <button class="btn-add" onclick="addRow('cylinder')">+ 添加圆柱段</button>
+  </th>
+</tr>
+<tr class="sub-title">
+  <th style="width:5%">序号</th>
+  <th colspan="2">理论尺寸</th>
+  <th></th>
+  <th colspan="2">理论尺寸</th>
+  <th></th>
+  <th colspan="2">实际尺寸</th>
+  <th style="width:20%">操作</th>
+</tr>
+<tr class="sub-title">
+  <th></th>
+  <th>直径(精)</th>
+  <th>直径余量(两端)</th>
+  <th></th>
+  <th>高度(精)</th>
+  <th>高度余量(两端)</th>
+  <th></th>
+  <th>直径(毛坯)</th>
+  <th>高度(毛坯)</th>
+  <th></th>
+</tr>
+<tbody id="cylinderBody">
+<!-- 动态行 -->
+</tbody>
+<tr class="sub-title note">
+  <td colspan="10">(没有输入则用理论值过渡过余量的尺寸)</td>
+</tr>
+</table>
+
+<!-- ====== 精尺寸方体 ====== -->
+<table id="rectTable">
+<tr>
+  <th colspan="14" class="section-title">精尺寸方体
+    <button class="btn-add" onclick="addRow('rect')">+ 添加方体段</button>
+  </th>
+</tr>
+<tr class="sub-title">
+  <th style="width:4%">序号</th>
+  <th colspan="2">长(精)</th>
+  <th></th>
+  <th colspan="2">宽(精)</th>
+  <th></th>
+  <th colspan="2">高(精)</th>
+  <th></th>
+  <th>长(毛坯)</th>
+  <th>宽(毛坯)</th>
+  <th>高(毛坯)</th>
+  <th style="width:16%">操作</th>
+</tr>
+<tr class="sub-title">
+  <th></th>
+  <th>长(精)</th>
+  <th>长余量(两端)</th>
+  <th></th>
+  <th>宽(精)</th>
+  <th>宽余量(两端)</th>
+  <th></th>
+  <th>高(精)</th>
+  <th>高余量(两端)</th>
+  <th></th>
+  <th></th>
+  <th></th>
+  <th></th>
+  <th></th>
+</tr>
+<tbody id="rectBody">
+<!-- 动态行 -->
+</tbody>
+<tr class="sub-title note">
+  <td colspan="14">(没有输入则用理论值过渡过余量的尺寸)</td>
+</tr>
+</table>
+
+<!-- ====== 精尺寸冲孔 ====== -->
+<table id="holeTable">
+<tr>
+  <th colspan="10" class="section-title">精尺寸冲孔
+    <button class="btn-add" onclick="addRow('hole')">+ 添加冲孔段</button>
+  </th>
+</tr>
+<tr class="sub-title">
+  <th style="width:5%">序号</th>
+  <th colspan="2">理论尺寸</th>
+  <th></th>
+  <th colspan="2">理论尺寸</th>
+  <th></th>
+  <th colspan="2">实际尺寸</th>
+  <th style="width:20%">操作</th>
+</tr>
+<tr class="sub-title">
+  <th></th>
+  <th>直径(精)</th>
+  <th>直径余量(两端)</th>
+  <th></th>
+  <th>高度(精)</th>
+  <th>高度余量(两端)</th>
+  <th></th>
+  <th>直径(毛坯)</th>
+  <th>高度(毛坯)</th>
+  <th></th>
+</tr>
+<tbody id="holeBody">
+<!-- 动态行 -->
+</tbody>
+</table>
+
+<!-- ====== 计算按钮 ====== -->
+<div class="action-bar">
+  <button class="btn btn-calc" onclick="calculateAll()">📊 开始计算</button>
+  <button class="btn btn-reset" onclick="resetAll()">🔄 重置全部</button>
+</div>
+
+<!-- ====== 结果汇总区 ====== -->
+<table id="resultTable">
+<tr><th colspan="4" class="section-title total-section">计算结果汇总</th></tr>
+
+<tr class="sub-title"><th style="width:25%">项目</th><th style="width:38%">结果/公式</th><th style="width:17%">数值</th><th style="width:20%">说明</th></tr>
+
+<tr>
+  <td>理论毛坯尺寸（显示理论毛坯尺寸）</td>
+  <td class="formula-cell" id="theorySizeFormula">-</td>
+  <td id="theorySizeValue" class="highlight">-</td>
+  <td>(自动生成或显示这余量的尺寸比如Φ403+203)</td>
+</tr>
+
+<tr>
+  <td>理论总重</td>
+  <td class="formula-cell" id="theoryWeightFormula">-</td>
+  <td id="theoryWeightValue" class="highlight">-</td>
+  <td>(自动生成)</td>
+</tr>
+
+<tr>
+  <td>火耗</td>
+  <td><input type="number" id="fireLoss" value="5" step="0.1" style="width:70%" onchange="recalcFireLoss()"> %</td>
+  <td id="fireLossWeight" class="highlight">-</td>
+  <td>(理论总重×理论总重×火耗)</td>
+</tr>
+
+<tr>
+  <td>理论下料重量</td>
+  <td class="formula-cell" id="cutWeightFormula">-</td>
+  <td id="cutWeightValue" class="highlight">-</td>
+  <td>(理论总重+火耗重量)</td>
+</tr>
+
+<tr>
+  <td>实际毛坯尺寸（显示实际毛坯尺寸）</td>
+  <td class="formula-cell" id="actualSizeFormula">-</td>
+  <td id="actualSizeValue" class="highlight">-</td>
+  <td>(圆柱+方体-冲孔比如Φ403+205+250+205+375-Φ120+205)</td>
+</tr>
+
+<tr>
+  <td>实际下料重量</td>
+  <td class="formula-cell" id="actualWeightFormula">-</td>
+  <td id="actualWeightValue" class="highlight">-</td>
+  <td>(实际毛坯体积×密度)</td>
+</tr>
+
+<tr>
+  <td>方镦</td>
+  <td><input type="number" id="fangdun" value="0" step="0.01" style="width:70%" onchange="recalcAll()"> kg</td>
+  <td>-</td>
+  <td>(实际下料重量-方镦重量)</td>
+</tr>
+
+<tr class="result-row">
+  <td>最终下料重量</td>
+  <td id="finalWeightFormula">实际下料重量 - 方镦</td>
+  <td id="finalWeightValue" class="highlight" style="font-size:16px;">-</td>
+  <td></td>
+</tr>
+
+<tr class="result-row">
+  <td>最终报价</td>
+  <td id="finalPriceFormula">最终下料重量 × 单价 × 数量</td>
+  <td id="finalPriceValue" class="highlight" style="font-size:16px;">-</td>
+  <td>元</td>
+</tr>
+</table>
+
+</div><!-- end container -->
+
+<script>
+// ========== 材料密度表 (g/cm³) ==========
+const DENSITY = {
+  '碳钢': 7.85, '不锈钢': 7.93, '铝合金': 2.7,
+  '铜合金': 8.96, '铸铁': 7.2, '工具钢': 7.81
+};
+
+// 当前材料（默认碳钢）
+let currentMaterial = '碳钢';
+
+// 行计数器
+let cylinderCount = 0;
+let rectCount = 0;
+let holeCount = 0;
+
+// ========== 初始化 ==========
+window.onload = function() {
+  // 默认各添加一行
+  addRow('cylinder');
+};
+
+// ========== 添加行 ==========
+function addRow(type) {
+  const tbody = document.getElementById(type + 'Body');
+  let count, html;
+
+  if (type === 'cylinder') {
+    cylinderCount++;
+    count = cylinderCount;
+    html = `
+    <tr data-type="cylinder" data-id="${count}">
+      <td>${count}</td>
+      <td><input type="number" id="cy_d_${count}" step="0.01" placeholder="(手动输入比如303)"></td>
+      <td><input type="number" id="cy_da_${count}" step="0.01" placeholder="(手动输入比如203)"></td>
+      <td></td>
+      <td><input type="number" id="cy_h_${count}" step="0.01" placeholder="(手动输入比如183)"></td>
+      <td><input type="number" id="cy_ha_${count}" step="0.01" placeholder="(手动输入比如203)"></td>
+      <td></td>
+      <td><input type="number" id="cy_ad_${count}" step="0.01" placeholder="(手动输入403)"></td>
+      <td><input type="number" id="cy_ah_${count}" step="0.01" placeholder="(手动输入263)"></td>
+      <td><button class="btn-del" onclick="delRow(this)">删除</button></td>
+    </tr>`;
+  } else if (type === 'rect') {
+    rectCount++;
+    count = rectCount;
+    html = `
+    <tr data-type="rect" data-id="${count}">
+      <td>${count}</td>
+      <td><input type="number" id="re_l_${count}" step="0.01" placeholder="(手动输入比如302)"></td>
+      <td><input type="number" id="re_la_${count}" step="0.01" placeholder="(手动输入比如203)"></td>
+      <td></td>
+      <td><input type="number" id="re_w_${count}" step="0.01" placeholder="(手动输入比如301)"></td>
+      <td><input type="number" id="re_wa_${count}" step="0.01" placeholder="(手动输入比如203)"></td>
+      <td></td>
+      <td><input type="number" id="re_h_${count}" step="0.01" placeholder="(手动输入比如353)"></td>
+      <td><input type="number" id="re_ha_${count}" step="0.01" placeholder="(手动输入比如203)"></td>
+      <td></td>
+      <td><input type="number" id="re_al_${count}" step="0.01" placeholder="(手动输入比如500)"></td>
+      <td><input type="number" id="re_aw_${count}" step="0.01" placeholder="(手动输入比如250)"></td>
+      <td><input type="number" id="re_ah_${count}" step="0.01" placeholder="(手动输入比如353)"></td>
+      <td><button class="btn-del" onclick="delRow(this)">删除</button></td>
+    </tr>`;
+  } else if (type === 'hole') {
+    holeCount++;
+    count = holeCount;
+    html = `
+    <tr data-type="hole" data-id="${count}">
+      <td>${count}</td>
+      <td><input type="number" id="ho_d_${count}" step="0.01" placeholder="(手动输入比如180)"></td>
+      <td><input type="number" id="ho_da_${count}" step="0.01" placeholder="(手动输入比如60)"></td>
+      <td></td>
+      <td><input type="number" id="ho_h_${count}" step="0.01" placeholder="(手动输入比如183)"></td>
+      <td><input type="number" id="ho_ha_${count}" step="0.01" placeholder="(手动输入比如203)"></td>
+      <td></td>
+      <td><input type="number" id="ho_ad_${count}" step="0.01" placeholder="(手动输入120)"></td>
+      <td><input type="number" id="ho_ah_${count}" step="0.01" placeholder="(手动输入203)"></td>
+      <td><button class="btn-del" onclick="delRow(this)">删除</button></td>
+    </tr>`;
+  }
+
+  tbody.insertAdjacentHTML('beforeend', html);
+}
+
+function delRow(btn) {
+  const tr = btn.closest('tr');
+  tr.remove();
+}
+
+// ========== 获取数值辅助函数 ==========
+function getVal(id) {
+  const el = document.getElementById(id);
+  if (!el || el.value === '' || isNaN(el.value)) return null;
+  return parseFloat(el.value);
+}
+
+function fmt(n, d) {
+  if (n === null || n === undefined || isNaN(n)) return '-';
+  return Number(n).toFixed(d || 2);
+}
+
+// mm -> cm
+function mm2cm(mm) { return mm / 10; }
+
+// ========== 核心计算 ==========
+function calculateAll() {
+  const density = DENSITY[currentMaterial] || 7.85;
+
+  // ---- 收集所有圆柱数据 ----
+  let cylinders = [];
+  document.querySelectorAll('#cylinderBody tr').forEach(tr => {
+    const id = tr.dataset.id;
+    const d = getVal(`cy_d_${id}`);       // 理论直径
+    const da = getVal(`cy_da_${id}`);     // 直径余量
+    const h = getVal(`cy_h_${id}`);       // 理论高度
+    const ha = getVal(`cy_ha_${id}`);     // 高度余量
+    const ad = getVal(`cy_ad_${id}`);     // 实际直径
+    const ah = getVal(`cy_ah_${id}`);     // 实际高度
+
+    cylinders.push({ id, d, da, h, ha, ad, ah });
+  });
+
+  // ---- 收集所有方体数据 ----
+  let rects = [];
+  document.querySelectorAll('#rectBody tr').forEach(tr => {
+    const id = tr.dataset.id;
+    const l = getVal(`re_l_${id}`);
+    const la = getVal(`re_la_${id}`);
+    const w = getVal(`re_w_${id}`);
+    const wa = getVal(`re_wa_${id}`);
+    const h = getVal(`re_h_${id}`);
+    const ha = getVal(`re_ha_${id}`);
+    const al = getVal(`re_al_${id}`);
+    const aw = getVal(`re_aw_${id}`);
+    const ahh = getVal(`re_ah_${id}`);
+
+    rects.push({ id, l, la, w, wa, h, ha, al, aw, ahh });
+  });
+
+  // ---- 收集所有冲孔数据 ----
+  let holes = [];
+  document.querySelectorAll('#holeBody tr').forEach(tr => {
+    const id = tr.dataset.id;
+    const d = getVal(`ho_d_${id}`);
+    const da = getVal(`ho_da_${id}`);
+    const h = getVal(`ho_h_${id}`);
+    const ha = getVal(`ho_ha_${id}`);
+    const ad = getVal(`ho_ad_${id}`);
+    const ah = getVal(`ho_ah_${id}`);
+
+    holes.push({ id, d, da, h, ha, ad, ah });
+  });
+
+  // ========== 理论计算（基于精尺寸+余量）==========
+  let theoryVolume = 0;   // 理论总体积 cm³
+  let theoryParts = [];   // 理论各部分描述
+
+  // 圆柱：毛坯直径 = 精直径 + 2×余量，毛坯高度 = 精高度 + 2×余量
+  cylinders.forEach(c => {
+    if (c.d !== null && c.h !== null) {
+      const td = c.d + (c.da !== null ? 2 * c.da : 0);  // 理论毛坯直径
+      const th = c.h + (c.ha !== null ? 2 * c.ha : 0);  // 理论毛坯高度
+      const r = mm2cm(td) / 2;
+      const hh = mm2cm(th);
+      const vol = Math.PI * r * r * hh;  // cm³
+      theoryVolume += vol;
+      theoryParts.push(`圆柱Φ${fmt(td,0)}×${fmt(th,0)}`);
+    }
+  });
+
+  // 方体：毛坯长/宽/高 = 精尺寸 + 2×余量
+  rects.forEach(r => {
+    if (r.l !== null && r.w !== null && r.h !== null) {
+      const tl = r.l + (r.la !== null ? 2 * r.la : 0);
+      const tw = r.w + (r.wa !== null ? 2 * r.wa : 0);
+      const th = r.h + (r.ha !== null ? 2 * r.ha : 0);
+      const vol = mm2cm(tl) * mm2cm(tw) * mm2cm(th);
+      theoryVolume += vol;
+      theoryParts.push(`方体${fmt(tl,0)}×${fmt(tw,0)}×${fmt(th,0)}`);
+    }
+  });
+
+  // 冲孔：从体积中减去（冲孔的毛坯尺寸）
+  holes.forEach(h => {
+    if (h.d !== null && h.h !== null) {
+      const td = h.d + (h.da !== null ? 2 * h.da : 0);
+      const th = h.h + (h.ha !== null ? 2 * h.ha : 0);
+      const r = mm2cm(td) / 2;
+      const hh = mm2cm(th);
+      const vol = Math.PI * r * r * hh;
+      theoryVolume -= vol;
+      theoryParts.push(`-冲孔Φ${fmt(td,0)}×${fmt(th,0)}`);
+    }
+  });
+
+  const theoryWeight = theoryVolume * density / 1000;  // kg
+
+  // ========== 实际计算（基于实际毛坯尺寸）==========
+  let actualVolume = 0;
+  let actualParts = [];
+
+  cylinders.forEach(c => {
+    // 如果有实际尺寸就用实际尺寸，否则用理论计算的毛坯尺寸
+    if (c.ad !== null && c.ah !== null) {
+      const r = mm2cm(c.ad) / 2;
+      const hh = mm2cm(c.ah);
+      const vol = Math.PI * r * r * hh;
+      actualVolume += vol;
+      actualParts.push(`圆柱Φ${fmt(c.ad,0)}×${fmt(c.ah,0)}`);
+    } else if (c.d !== null && c.h !== null) {
+      const td = c.d + (c.da !== null ? 2 * c.da : 0);
+      const th = c.h + (c.ha !== null ? 2 * c.ha : 0);
+      const r = mm2cm(td) / 2;
+      const hh = mm2cm(th);
+      const vol = Math.PI * r * r * hh;
+      actualVolume += vol;
+      actualParts.push(`圆柱Φ${fmt(td,0)}×${fmt(th,0)}`);
+    }
+  });
+
+  rects.forEach(r => {
+    if (r.al !== null && r.aw !== null && r.ahh !== null) {
+      const vol = mm2cm(r.al) * mm2cm(r.aw) * mm2cm(r.ahh);
+      actualVolume += vol;
+      actualParts.push(`方体${fmt(r.al,0)}×${fmt(r.aw,0)}×${fmt(r.ahh,0)}`);
+    } else if (r.l !== null && r.w !== null && r.h !== null) {
+      const tl = r.l + (r.la !== null ? 2 * r.la : 0);
+      const tw = r.w + (r.wa !== null ? 2 * r.wa : 0);
+      const th = r.h + (r.ha !== null ? 2 * r.ha : 0);
+      const vol = mm2cm(tl) * mm2cm(tw) * mm2cm(th);
+      actualVolume += vol;
+      actualParts.push(`方体${fmt(tl,0)}×${fmt(tw,0)}×${fmt(th,0)}`);
+    }
+  });
+
+  holes.forEach(h => {
+    if (h.ad !== null && h.ah !== null) {
+      const r = mm2cm(h.ad) / 2;
+      const hh = mm2cm(h.ah);
+      const vol = Math.PI * r * r * hh;
+      actualVolume -= vol;
+      actualParts.push(`-冲孔Φ${fmt(h.ad,0)}×${fmt(h.ah,0)}`);
+    } else if (h.d !== null && h.h !== null) {
+      const td = h.d + (h.da !== null ? 2 * h.da : 0);
+      const th = h.h + (h.ha !== null ? 2 * h.ha : 0);
+      const r = mm2cm(td) / 2;
+      const hh = mm2cm(th);
+      const vol = Math.PI * r * r * hh;
+      actualVolume -= vol;
+      actualParts.push(`-冲孔Φ${fmt(td,0)}×${fmt(th,0)}`);
+    }
+  });
+
+  const actualWeight = actualVolume * density / 1000;
+
+  // ========== 火耗和最终计算 ==========
+  const fireLossPercent = getVal('fireLoss') || 5;
+  const fireLossWeight = theoryWeight * fireLossPercent / 100;
+  const cutWeight = theoryWeight + fireLossWeight;
+  const fangdun = getVal('fangdun') || 0;
+  const finalWeight = actualWeight - fangdun;
+  const unitPrice = getVal('unitPrice') || 0;
+  const quantity = getVal('quantity') || 1;
+  const finalPrice = finalWeight * unitPrice * quantity;
+
+  // ========== 显示结果 ==========
+  // 理论毛坯尺寸
+  document.getElementById('theorySizeFormula').textContent = theoryParts.length > 0 ? theoryParts.join('+') : '-';
+  document.getElementById('theorySizeValue').textContent = theoryParts.join('+');
+
+  // 理论总重
+  document.getElementById('theoryWeightFormula').textContent =
+    `理论总体积(${fmt(theoryVolume,2)}cm³) × 密度(${density}g/cm³) ÷ 1000`;
+  document.getElementById('theoryWeightValue').textContent = fmt(theoryWeight, 3) + ' KG';
+
+  // 火耗
+  document.getElementById('fireLossWeight').textContent = fmt(fireLossWeight, 3) + ' KG';
+
+  // 理论下料重量
+  document.getElementById('cutWeightFormula').textContent =
+    `${fmt(theoryWeight,3)} + ${fmt(fireLossPercent,1)}%`;
+  document.getElementById('cutWeightValue').textContent = fmt(cutWeight, 3) + ' KG';
+
+  // 实际毛坯尺寸
+  document.getElementById('actualSizeFormula').textContent = actualParts.length > 0 ? actualParts.join('+') : '-';
+  document.getElementById('actualSizeValue').textContent = actualParts.join('+');
+
+  // 实际下料重量
+  document.getElementById('actualWeightFormula').textContent =
+    `实际总体积(${fmt(actualVolume,2)}cm³) × 密度(${density}g/cm³) ÷ 1000`;
+  document.getElementById('actualWeightValue').textContent = fmt(actualWeight, 3) + ' KG';
+
+  // 最终下料重量
+  document.getElementById('finalWeightValue').textContent = fmt(finalWeight, 3) + ' KG';
+
+  // 最终报价
+  document.getElementById('finalPriceValue').textContent = fmt(finalPrice, 2) + ' 元';
+
+  // 顶部栏更新
+  document.getElementById('unitWeight').value = fmt(actualWeight, 3);
+  document.getElementById('totalWeight').value = fmt(finalWeight * quantity, 3);
+  document.getElementById('totalPrice').value = fmt(finalPrice, 2);
+}
+
+function recalcFireLoss() {
+  calculateAll();
+}
+
+function recalcAll() {
+  calculateAll();
+}
+
+// ========== 重置 ==========
+function resetAll() {
+  if (!confirm('确定要重置所有数据吗？')) return;
+
+  // 清空顶部信息
+  document.getElementById('customer').value = '';
+  document.getElementById('productName').value = '';
+  document.getElementById('model').value = '';
+  document.getElementById('drawingNo').value = '';
+  document.getElementById('unitWeight').value = '';
+  document.getElementById('quantity').value = '1';
+  document.getElementById('unitPrice').value = '';
+  document.getElementById('totalWeight').value = '';
+  document.getElementById('totalPrice').value = '';
+
+  // 清空表格
+  document.getElementById('cylinderBody').innerHTML = '';
+  document.getElementById('rectBody').innerHTML = '';
+  document.getElementById('holeBody').innerHTML = '';
+  cylinderCount = 0; rectCount = 0; holeCount = 0;
+
+  // 重置结果
+  document.getElementById('fireLoss').value = '5';
+  document.getElementById('fangdun').value = '0';
+  ['theorySizeFormula','theorySizeValue','theoryWeightFormula','theoryWeightValue',
+   'fireLossWeight','cutWeightFormula','cutWeightValue',
+   'actualSizeFormula','actualSizeValue','actualWeightFormula','actualWeightValue',
+   'finalWeightValue','finalPriceValue'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = el.classList.contains('highlight') ? '-' : '-';
+  });
+
+  // 默认加一行圆柱
+  addRow('cylinder');
+}
+</script>
+</body>
+</html>

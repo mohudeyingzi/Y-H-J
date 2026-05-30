@@ -1,0 +1,25 @@
+{
+  "id": "session-1779005315305-86lwxh",
+  "name": "钢锭计算工具",
+  "status": "active",
+  "createdAt": "2026-05-17T08:17:54.914Z",
+  "updatedAt": "2026-05-17T08:17:54.914Z",
+  "agents": [
+    {
+      "id": "agent_prc74jwn",
+      "name": "Main Agent",
+      "role": "assistant",
+      "status": "idle",
+      "createdAt": "2026-05-17T08:17:54.914Z",
+      "model": "unknown",
+      "systemPrompt": ""
+    }
+  ],
+  "summary": {
+    "id": "summary_wupewysc",
+    "title": "钢锭计算工具",
+    "createdAt": "2026-05-17T08:17:54.914Z",
+    "file": "summary_wupewysc.md"
+  },
+  "lastMessageCount": 36
+}

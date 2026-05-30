@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方形锥度钢锭锯切计算器</title>
+<style>
+:root {
+  --bg: #f5f7fa;
+  --panel: #ffffff;
+  --ink: #18202a;
+  --muted: #687381;
+  --line: #d9e0e8;
+  --accent: #0f766e;
+  --accent2: #b45309;
+  --danger: #b91c1c;
+  --field: #f9fbfd;
+  --result-bg: #eefaf8;
+  --result-border: #0f766e;
+  --note-bg: #eefaf8;
+  --note-color: #164e49;
+  --warn-bg: #fff7ed;
+  --warn-color: #713f12;
+  --canvas-bg: #eef3f7;
+  --cut-fill: rgba(15, 118, 110, 0.42);
+  --grid-color: #d0d7e2;
+  font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+}
+.dark {
+  --bg: #1a1a2e;
+  --panel: #1e2a3a;
+  --ink: #e0e0e0;
+  --muted: #8899aa;
+  --line: #2a3a4f;
+  --accent: #f7971e;
+  --accent2: #e67e22;
+  --danger: #e74c3c;
+  --field: #1a2733;
+  --result-bg: #1a3a2a;
+  --result-border: #27ae60;
+  --note-bg: #1a2a2a;
+  --note-color: #2ecc71;
+  --warn-bg: #2a1a1a;
+  --warn-color: #e67e22;
+  --canvas-bg: #1a2733;
+  --cut-fill: rgba(247, 151, 30, 0.35);
+  --grid-color: #2a3a4f;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  transition: background 0.3s, color 0.3s;
+}
+
+main {
+  width: min(1200px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 36px;
+}
+
+/* Header */
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.theme-btn {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.theme-btn:hover { border-color: var(--accent); }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+h1 { margin: 0 0 6px; font-size: clamp(22px, 3vw, 34px); line-height: 1.15; color: var(--ink); }
+.subtitle { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+/* Layout */
+.shell {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(39, 50, 67, 0.08);
+  transition: background 0.3s, border 0.3s;
+}
+
+/* Inputs */
+.inputs { padding: 20px; }
+.section-title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--line);
+}
+.section-title::before {
+  content: '';
+  width: 4px; height: 16px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+input, select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--field);
+  color: var(--ink);
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+}
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.13);
+}
+.unit { color: var(--muted); font-size: 11px; }
+.err-msg { display: none; color: var(--danger); font-size: 11px; margin-top: 2px; }
+.err-msg.show { display: block; }
+input.error { border-color: var(--danger); }
+
+/* Results */
+.results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.metric {
+  min-height: 90px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--field);
+}
+.metric strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+.metric .value {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--accent);
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+}
+.metric .value span { font-size: 14px; color: var(--muted); font-weight: 600; }
+.metric .value.highlight { color: var(--danger); }
+.metric small { display: block; margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.3; }
+
+/* Diagram */
+.diagram-wrap { padding: 18px; }
+canvas {
+  width: 100%;
+  height: 280px;
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--canvas-bg);
+  transition: background 0.3s;
+}
+
+/* Notes */
+.notes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.note {
+  border-left: 4px solid var(--accent);
+  background: var(--note-bg);
+  padding: 10px 12px;
+  color: var(--note-color);
+  font-size: 12px;
+  line-height: 1.55;
+  border-radius: 0 6px 6px 0;
+  transition: background 0.3s, color 0.3s;
+}
+.note.warn {
+  border-left-color: var(--accent2);
+  background: var(--warn-bg);
+  color: var(--warn-color);
+}
+
+/* Principles */
+.principles {
+  margin-top: 16px;
+  padding: 18px;
+  border-top: 1px solid var(--line);
+}
+.principles summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  user-select: none;
+}
+.principles details[open] summary { margin-bottom: 10px; }
+.principles p, .principles li {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.principles ul { padding-left: 18px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  header { flex-direction: column; align-items: flex-start; }
+  .notes { grid-template-columns: 1fr; }
+  .results { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px) {
+  main { width: min(100% - 16px, 1200px); padding-top: 14px; }
+  .grid { grid-template-columns: 1fr; }
+  .results { grid-template-columns: 1fr; }
+  canvas { height: 220px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="toolbar">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 暗色模式</button>
+  </div>
+
+  <header>
+    <div>
+      <h1>方形锥度钢锭 · 锯切长度计算</h1>
+      <p class="subtitle">基于截锥体积积分 + 二分法求解，按目标重量精确计算锯切长度</p>
+    </div>
+  </header>
+
+  <div class="shell">
+    <!-- 左侧输入面板 -->
+    <section class="panel inputs">
+      <h2 class="section-title">钢锭尺寸</h2>
+      <div class="grid">
+        <label>大头长 <input id="bigA" type="number" value="595" min="1" step="0.1"><span class="err-msg" id="err-bigA">必须 &gt; 0</span></label>
+        <label>大头宽 <input id="bigB" type="number" value="597" min="1" step="0.1"><span class="err-msg" id="err-bigB">必须 &gt; 0</span></label>
+        <label>小头长 <input id="smallA" type="number" value="490" min="1" step="0.1"><span class="err-msg" id="err-smallA">必须 &gt; 0</span></label>
+        <label>小头宽 <input id="smallB" type="number" value="490" min="1" step="0.1"><span class="err-msg" id="err-smallB">必须 &gt; 0</span></label>
+        <label>总长 <input id="length" type="number" value="1353" min="1" step="0.1"><span class="err-msg" id="err-length">必须 &gt; 0</span><span class="unit">mm</span></label>
+        <label>总重量 <input id="totalWeight" type="number" value="3347" min="0.1" step="0.1"><span class="err-msg" id="err-totalWeight">必须 &gt; 0</span><span class="unit">kg</span></label>
+      </div>
+
+      <h2 class="section-title">锯切要求</h2>
+      <div class="grid">
+        <label>目标重量 <input id="targetWeight" type="number" value="1040" min="0.1" step="0.1"><span class="err-msg" id="err-targetWeight">必须 &gt; 0 且 ≤ 总重</span><span class="unit">kg</span></label>
+        <label>开始端
+          <select id="startEnd">
+            <option value="small">从小头开始</option>
+            <option value="big">从大头开始</option>
+          </select>
+          <span class="unit">量取长度的基准端</span>
+        </label>
+        <label>锯缝宽度 <input id="kerf" type="number" value="3" min="0" step="0.1"><span class="err-msg" id="err-kerf">不能 &lt; 0 或 ≥ 总长</span><span class="unit">mm</span></label>
+        <label>显示精度
+          <select id="precision">
+            <option value="1">0.1 mm</option>
+            <option value="0">1 mm</option>
+            <option value="2">0.01 mm</option>
+          </select>
+          <span class="unit">结果小数位</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 右侧结果面板 -->
+    <section class="panel">
+      <div class="results">
+        <div class="metric">
+          <strong>需要量取长度</strong>
+          <div class="value" id="cutLength">-- <span>mm</span></div>
+          <small id="cutHint">已扣除锯缝，从选定端面向内量取。</small>
+        </div>
+        <div class="metric">
+          <strong>锯线位置</strong>
+          <div class="value highlight" id="sawPosition">-- <span>mm</span></div>
+          <small>以小头端面为 0 点坐标。</small>
+        </div>
+        <div class="metric">
+          <strong>锯下重量</strong>
+          <div class="value" id="actualWeight">-- <span>kg</span></div>
+          <small id="actualHint">按截锥体积与密度反算验证。</small>
+        </div>
+        <div class="metric">
+          <strong>剩余部分</strong>
+          <div class="value" id="remainInfo">--</div>
+          <small>剩余高度 + 剩余重量。</small>
+        </div>
+      </div>
+
+      <div class="diagram-wrap">
+        <canvas id="diagram" width="1100" height="430"></canvas>
+        <div class="notes">
+          <div class="note" id="mainNote"></div>
+          <div class="note warn">实际生产还应考虑钢锭密度偏析、端部质量、锯床夹持余量做工艺修正。</div>
+        </div>
+      </div>
+
+      <!-- 计算原理 -->
+      <div class="principles">
+        <details>
+          <summary>📖 计算原理（点击展开）</summary>
+          <p>假设钢锭横截面尺寸从大头到小头<b>线性变化</b>，则任意位置 x 处的截面面积为二次函数：</p>
+          <p style="margin:6px 0;padding:6px 10px;background:var(--field);border-radius:4px;font-family:monospace;font-size:12px;">
+            A(x) = [a₁ + (a₂−a₁)(x/L)] × [b₁ + (b₂−b₁)(x/L)]
+          </p>
+          <ul>
+            <li><b>总体积</b>：V = ∫₀ᴸ A(x) dx（精确解析积分）</li>
+            <li><b>密度</b>：ρ = 总重量 / 总体积</li>
+            <li><b>目标体积</b>：V_target = 目标重量 / ρ</li>
+            <li><b>锯切长度 h</b>：通过 <b>二分法</b> 求解 ∫₀ʰ A(x) dx = V_target，迭代精度 &lt; 10⁻⁶</li>
+            <li><b>锯缝处理</b>：量取长度 = 实体长度 − 锯缝宽度</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function() {
+  'use strict';
+
+  var ids = ["bigA","bigB","smallA","smallB","length","totalWeight","targetWeight","startEnd","kerf","precision"];
+  var els = {};
+  ids.forEach(function(id) { els[id] = document.getElementById(id); });
+
+  var out = {
+    cutLength:  document.getElementById("cutLength"),
+    sawPosition: document.getElementById("sawPosition"),
+    actualWeight: document.getElementById("actualWeight"),
+    cutHint:     document.getElementById("cutHint"),
+    actualHint:  document.getElementById("actualHint"),
+    remainInfo:  document.getElementById("remainInfo"),
+    mainNote:    document.getElementById("mainNote"),
+    canvas:      document.getElementById("diagram")
+  };
+
+  // --- Validation ---
+  function number(id) { return Number(els[id].value); }
+
+  function validate() {
+    var data = {
+      bigA: number("bigA"), bigB: number("bigB"),
+      smallA: number("smallA"), smallB: number("smallB"),
+      length: number("length"), totalWeight: number("totalWeight"),
+      targetWeight: number("targetWeight"), kerf: number("kerf"),
+      startEnd: els.startEnd.value
+    };
+
+    var ok = true;
+    var fields = ["bigA","bigB","smallA","smallB","length","totalWeight","targetWeight"];
+    fields.forEach(function(f) {
+      var e = document.getElementById("err-"+f);
+      if (!Number.isFinite(data[f]) || data[f] <= 0) {
+        e.classList.add("show"); els[f].classList.add("error"); ok = false;
+      } else {
+        e.classList.remove("show"); els[f].classList.remove("error");
+      }
+    });
+
+    if (data.targetWeight > data.totalWeight && ok) {
+      document.getElementById("err-targetWeight").classList.add("show");
+      els.targetWeight.classList.add("error");
+      ok = false;
+    }
+
+    var ke = document.getElementById("err-kerf");
+    if (!Number.isFinite(data.kerf) || data.kerf < 0 || data.kerf >= data.length) {
+      ke.classList.add("show"); els.kerf.classList.add("error"); ok = false;
+    } else {
+      ke.classList.remove("show"); els.kerf.classList.remove("error");
+    }
+
+    return ok ? data : null;
+  }
+
+  // --- Math ---
+  function volumeFromSmall(x, data) {
+    var da = data.bigA - data.smallA;
+    var db = data.bigB - data.smallB;
+    var L = data.length;
+    return data.smallA * data.smallB * x
+      + (data.smallA * db + data.smallB * da) * x * x / (2 * L)
+      + da * db * x * x * x / (3 * L * L);
+  }
+
+  function solveLength(targetVolume, data, fromBig) {
+    var totalVolume = volumeFromSmall(data.length, data);
+    var low = 0, high = data.length;
+    for (var i = 0; i < 90; i++) {
+      var mid = (low + high) / 2;
+      var vol = fromBig ? (totalVolume - volumeFromSmall(data.length - mid, data)) : volumeFromSmall(mid, data);
+      if (vol < targetVolume) low = mid; else high = mid;
+    }
+    return (low + high) / 2;
+  }
+
+  // --- Draw ---
+  function draw(data, result) {
+    var canvas = out.canvas;
+    var ctx = canvas.getContext("2d");
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var w = rect.width, h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    var padX = Math.max(28, w * 0.06);
+    var left = padX, right = w - padX;
+    var centerY = h * 0.48;
+    var maxHalf = Math.min(80, h * 0.24);
+    var smallHalf = maxHalf * Math.min(data.smallA, data.smallB) / Math.max(data.bigA, data.bigB);
+    var bigHalf = maxHalf;
+    var sawX = left + (right - left) * (result.sawFromSmall / data.length);
+
+    var isDark = document.documentElement.classList.contains("dark");
+    var canvasText = isDark ? "#8899aa" : "#4b5563";
+    var ingotFill = isDark ? "#3a4a5f" : "#dde7ef";
+    var ingotStroke = isDark ? "#5a6a7f" : "#7f8c99";
+    var cutColor = isDark ? "rgba(247,151,30,0.35)" : "rgba(15,118,110,0.42)";
+    var cutFromSmall = data.startEnd === "small";
+    var cutColorStop = isDark ? "rgba(247,151,30," : "rgba(15,118,110,";
+
+    // Draw ingot body
+    ctx.fillStyle = ingotFill;
+    ctx.strokeStyle = ingotStroke;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(left, centerY - smallHalf);
+    ctx.lineTo(right, centerY - bigHalf);
+    ctx.lineTo(right, centerY + bigHalf);
+    ctx.lineTo(left, centerY + smallHalf);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Highlight cut portion
+    var grad = ctx.createLinearGradient(left, 0, right, 0);
+    var ratio = result.sawFromSmall / data.length;
+    if (cutFromSmall) {
+      grad.addColorStop(0, cutColorStop + "0.46)");
+      grad.addColorStop(Math.max(0, ratio - 0.002), cutColorStop + "0.38)");
+      grad.addColorStop(Math.min(1, ratio + 0.002), cutColorStop + "0.05)");
+      grad.addColorStop(1, "rgba(0,0,0,0)");
+    } else {
+      grad.addColorStop(0, "rgba(0,0,0,0)");
+      grad.addColorStop(Math.max(0, ratio - 0.002), cutColorStop + "0.05)");
+      grad.addColorStop(Math.min(1, ratio + 0.002), cutColorStop + "0.38)");
+      grad.addColorStop(1, cutColorStop + "0.46)");
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(left, centerY - smallHalf);
+    ctx.lineTo(right, centerY - bigHalf);
+    ctx.lineTo(right, centerY + bigHalf);
+    ctx.lineTo(left, centerY + smallHalf);
+    ctx.closePath();
+    ctx.clip();
+    ctx.fillStyle = grad;
+    ctx.fillRect(left, centerY - bigHalf - 8, right - left, bigHalf * 2 + 16);
+    ctx.restore();
+
+    // Saw line
+    ctx.strokeStyle = isDark ? "#f7971e" : "#b91c1c";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    ctx.moveTo(sawX, centerY - bigHalf - 22);
+    ctx.lineTo(sawX, centerY + bigHalf + 22);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // End labels
+    ctx.fillStyle = canvasText;
+    ctx.font = "600 13px Microsoft YaHei, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("小头 " + data.smallA + "\u00d7" + data.smallB, left, centerY + bigHalf + 44);
+    ctx.textAlign = "right";
+    ctx.fillText("大头 " + data.bigA + "\u00d7" + data.bigB, right, centerY + bigHalf + 44);
+
+    // Saw position label
+    ctx.textAlign = "center";
+    ctx.fillStyle = isDark ? "#f7971e" : "#b91c1c";
+    ctx.fillText("锯线 " + result.sawFromSmall.toFixed(result.precision) + " mm", sawX, centerY - bigHalf - 36);
+
+    // Total length ruler
+    ctx.strokeStyle = canvasText;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(left, h - 36);
+    ctx.lineTo(right, h - 36);
+    ctx.moveTo(left, h - 42);
+    ctx.lineTo(left, h - 30);
+    ctx.moveTo(right, h - 42);
+    ctx.lineTo(right, h - 30);
+    ctx.stroke();
+    ctx.fillStyle = canvasText;
+    ctx.font = "12px Microsoft YaHei";
+    ctx.textAlign = "center";
+    ctx.fillText("总长 " + data.length + " mm", (left + right) / 2, h - 16);
+
+    // Cut / remain annotations on diagram
+    var cutCenterX, remainCenterX, remainWidth;
+    if (cutFromSmall) {
+      cutCenterX = (left + sawX) / 2;
+      remainCenterX = (sawX + right) / 2;
+    } else {
+      cutCenterX = (sawX + right) / 2;
+      remainCenterX = (left + sawX) / 2;
+    }
+
+    ctx.fillStyle = isDark ? "#f7971e" : "#0f766e";
+    ctx.textAlign = "center";
+    ctx.font = "bold 12px Microsoft YaHei, sans-serif";
+    var cutLenLabel = result.solidLength.toFixed(result.precision) + " mm / " + (data.targetWeight).toFixed(0) + " kg";
+    ctx.fillText(cutLenLabel, cutCenterX, centerY - bigHalf - 50);
+
+    ctx.fillStyle = canvasText;
+    ctx.font = "12px Microsoft YaHei, sans-serif";
+    var remainLen = data.length - result.solidLength;
+    var remainKg = data.totalWeight - data.targetWeight;
+    ctx.fillText("剩余 " + remainLen.toFixed(result.precision) + " mm / " + remainKg.toFixed(0) + " kg", remainCenterX, centerY - bigHalf - 50);
+  }
+
+  // --- Calculate ---
+  function calculate() {
+    var data = validate();
+    if (!data) return;
+
+    var precision = Number(els.precision.value);
+    var totalVolume = volumeFromSmall(data.length, data);
+    var targetVolume = totalVolume * data.targetWeight / data.totalWeight;
+    var fromBig = data.startEnd === "big";
+    var solidLength = solveLength(targetVolume, data, fromBig);
+    var measureLength = Math.max(0, solidLength - data.kerf);
+    var sawFromSmall = fromBig ? data.length - solidLength : solidLength;
+    var actualWeight = data.totalWeight * targetVolume / totalVolume;
+    var remainLen = data.length - solidLength;
+    var remainWt = data.totalWeight - actualWeight;
+    var result = { solidLength: solidLength, measureLength: measureLength, sawFromSmall: sawFromSmall, precision: precision };
+
+    // Update results
+    function fmtMM(v) { return v.toFixed(precision) + " <span>mm</span>"; }
+    out.cutLength.innerHTML = fmtMM(measureLength);
+    out.sawPosition.innerHTML = fmtMM(sawFromSmall);
+    out.actualWeight.innerHTML = actualWeight.toFixed(2) + " <span>kg</span>";
+    out.remainInfo.innerHTML = remainLen.toFixed(precision) + " mm<br><span style=\"font-size:13px;color:var(--muted)\">剩余 " + remainWt.toFixed(1) + " kg</span>";
+
+    out.cutHint.textContent = fromBig
+      ? "从大头端面向内量取 " + measureLength.toFixed(precision) + " mm（已扣锯缝 " + data.kerf + " mm）。"
+      : "从小头端面向内量取 " + measureLength.toFixed(precision) + " mm（已扣锯缝 " + data.kerf + " mm）。";
+
+    out.actualHint.textContent = data.kerf > 0
+      ? "理论实体长度 " + solidLength.toFixed(precision) + " mm，锯缝 " + data.kerf + " mm。"
+      : "锯缝为 0，量取长度 = 理论实体长度。";
+
+    var dirLabel = fromBig ? "从大头" : "从小头";
+    out.mainNote.textContent = dirLabel + "切 " + data.targetWeight + " kg → 理论实体 " + solidLength.toFixed(precision) + " mm，量取 " + measureLength.toFixed(precision) + " mm。";
+
+    draw(data, result);
+  }
+
+  // --- Events ---
+  ids.forEach(function(id) { els[id].addEventListener("input", calculate); });
+  window.addEventListener("resize", calculate);
+
+  // Initial calc
+  calculate();
+})();
+
+// --- Theme toggle ---
+function toggleTheme() {
+  var html = document.documentElement;
+  var btn = document.getElementById("themeBtn");
+  if (html.classList.contains("dark")) {
+    html.classList.remove("dark");
+    btn.textContent = "\ud83c\udf19 \u6697\u8272\u6a21\u5f0f";
+    localStorage.setItem("ingot-theme", "light");
+  } else {
+    html.classList.add("dark");
+    btn.textContent = "\u2600\ufe0f \u6d45\u8272\u6a21\u5f0f";
+    localStorage.setItem("ingot-theme", "dark");
+  }
+  // Recalc to redraw canvas
+  var e = document.createEvent("HTMLEvents");
+  e.initEvent("input", true, false);
+  document.getElementById("targetWeight").dispatchEvent(e);
+}
+
+// Restore theme on load
+(function() {
+  if (localStorage.getItem("ingot-theme") === "dark") {
+    document.documentElement.classList.add("dark");
+    document.getElementById("themeBtn").textContent = "\u2600\ufe0f \u6d45\u8272\u6a21\u5f0f";
+  }
+})();
+</script>
+</body>
+</html>

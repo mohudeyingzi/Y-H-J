@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>锻件算重报价系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        select:focus, input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .shape-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .shape-option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .shape-option:hover {
+            border-color: #667eea;
+            background: #f5f5f5;
+        }
+
+        .shape-option.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .shape-option .icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .dimension-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .results {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .result-label {
+            color: #666;
+        }
+
+        .result-value {
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .dimension-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ 锻件算重报价系统</h1>
+            <p>支持圆柱形、方形锻件，含冲孔和火耗计算</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <div class="section-title">1. 选择锻件形状</div>
+                <div class="shape-options">
+                    <div class="shape-option active" data-shape="cylinder" onclick="selectShape('cylinder')">
+                        <div class="icon">� cyl</div>
+                        <div>圆柱形</div>
+                    </div>
+                    <div class="shape-option" data-shape="rectangular" onclick="selectShape('rectangular')">
+                        <div class="icon">▭</div>
+                        <div>方形</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">2. 输入尺寸参数</div>
+                <div id="cylinder-inputs" class="dimension-inputs">
+                    <div class="form-group">
+                        <label for="diameter">直径 (cm)</label>
+                        <input type="number" id="diameter" step="0.1" placeholder="例如: 10">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">高度 (cm)</label>
+                        <input type="number" id="height" step="0.1" placeholder="例如: 5">
+                    </div>
+                </div>
+                <div id="rectangular-inputs" class="dimension-inputs hidden">
+                    <div class="form-group">
+                        <label for="length">长度 (cm)</label>
+                        <input type="number" id="length" step="0.1" placeholder="例如: 10">
+                    </div>
+                    <div class="form-group">
+                        <label for="width">宽度 (cm)</label>
+                        <input type="number" id="width" step="0.1" placeholder="例如: 8">
+                    </div>
+                    <div class="form-group">
+                        <label for="rect-height">高度 (cm)</label>
+                        <input type="number" id="rect-height" step="0.1" placeholder="例如: 5">
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="has-hole" onchange="toggleHoleInputs()">
+                    <label for="has-hole">需要冲孔</label>
+                </div>
+
+                <div id="hole-inputs" class="dimension-inputs hidden">
+                    <div class="form-group">
+                        <label for="hole-diameter">孔径 (cm)</label>
+                        <input type="number" id="hole-diameter" step="0.1" placeholder="例如: 2">
+                    </div>
+                    <div class="form-group">
+                        <label for="hole-depth">孔深 (cm)</label>
+                        <input type="number" id="hole-depth" step="0.1" placeholder="例如: 5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">3. 材料与火耗</div>
+                <div class="form-group">
+                    <label for="material">选择材料</label>
+                    <select id="material">
+                        <option value="7.85">碳钢 (密度: 7.85 g/cm³)</option>
+                        <option value="7.93">不锈钢 (密度: 7.93 g/cm³)</option>
+                        <option value="2.7">铝合金 (密度: 2.7 g/cm³)</option>
+                        <option value="8.96">铜 (密度: 8.96 g/cm³)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fire-loss">火耗率 (%)</label>
+                    <input type="number" id="fire-loss" step="0.1" value="5" placeholder="例如: 5">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">4. 报价信息</div>
+                <div class="form-group">
+                    <label for="unit-price">材料单价 (元/kg)</label>
+                    <input type="number" id="unit-price" step="0.01" placeholder="例如: 10">
+                </div>
+                <div class="form-group">
+                    <label for="processing-fee">加工费 (元)</label>
+                    <input type="number" id="processing-fee" step="0.01" value="0" placeholder="例如: 100">
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="calculate()">🔢 开始计算</button>
+            <button class="btn btn-secondary" onclick="resetForm()">🔄 重置</button>
+
+            <div id="results" class="results hidden">
+                <div class="section-title">📊 计算结果</div>
+                <div class="result-item">
+                    <span class="result-label">锻件体积:</span>
+                    <span class="result-value" id="result-volume">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">净重:</span>
+                    <span class="result-value" id="result-net-weight">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">火耗重量:</span>
+                    <span class="result-value" id="result-fire-loss">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总重:</span>
+                    <span class="result-value" id="result-total-weight">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">材料费用:</span>
+                    <span class="result-value" id="result-material-cost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总报价:</span>
+                    <span class="result-value" id="result-total-price">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 材料密度表
+        const materialDensity = {
+            '碳钢': 7.85,
+            '不锈钢': 7.93,
+            '铝合金': 2.7,
+            '铜': 8.96
+        };
+
+        // 选择形状
+        function selectShape(shape) {
+            const options = document.querySelectorAll('.shape-option');
+            options.forEach(opt => opt.classList.remove('active'));
+            
+            event.target.closest('.shape-option').classList.add('active');
+            
+            if (shape === 'cylinder') {
+                document.getElementById('cylinder-inputs').classList.remove('hidden');
+                document.getElementById('rectangular-inputs').classList.add('hidden');
+            } else {
+                document.getElementById('cylinder-inputs').classList.add('hidden');
+                document.getElementById('rectangular-inputs').classList.remove('hidden');
+            }
+        }
+
+        // 切换冲孔输入
+        function toggleHoleInputs() {
+            const holeInputs = document.getElementById('hole-inputs');
+            const hasHole = document.getElementById('has-hole').checked;
+            
+            if (hasHole) {
+                holeInputs.classList.remove('hidden');
+            } else {
+                holeInputs.classList.add('hidden');
+            }
+        }
+
+        // 计算体积
+        function calculateVolume() {
+            const activeShape = document.querySelector('.shape-option.active').dataset.shape;
+            let volume = 0;
+            
+            if (activeShape === 'cylinder') {
+                const diameter = parseFloat(document.getElementById('diameter').value);
+                const height = parseFloat(document.getElementById('height').value);
+                
+                if (!diameter || !height) {
+                    alert('请输入完整的尺寸参数！');
+                    return null;
+                }
+                
+                const radius = diameter / 2;
+                volume = Math.PI * radius * radius * height;
+            } else {
+                const length = parseFloat(document.getElementById('length').value);
+                const width = parseFloat(document.getElementById('width').value);
+                const height = parseFloat(document.getElementById('rect-height').value);
+                
+                if (!length || !width || !height) {
+                    alert('请输入完整的尺寸参数！');
+                    return null;
+                }
+                
+                volume = length * width * height;
+            }
+            
+            // 减去冲孔体积
+            if (document.getElementById('has-hole').checked) {
+                const holeDiameter = parseFloat(document.getElementById('hole-diameter').value);
+                const holeDepth = parseFloat(document.getElementById('hole-depth').value);
+                
+                if (holeDiameter && holeDepth) {
+                    const holeRadius = holeDiameter / 2;
+                    const holeVolume = Math.PI * holeRadius * holeRadius * holeDepth;
+                    volume -= holeVolume;
+                }
+            }
+            
+            return volume;
+        }
+
+        // 主计算函数
+        function calculate() {
+            const volume = calculateVolume();
+            if (volume === null) return;
+            
+            const density = parseFloat(document.getElementById('material').value);
+            const fireLossPercent = parseFloat(document.getElementById('fire-loss').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('unit-price').value) || 0;
+            const processingFee = parseFloat(document.getElementById('processing-fee').value) || 0;
+            
+            // 计算重量
+            const netWeight = volume * density / 1000; // 转换为kg
+            const fireLossWeight = netWeight * (fireLossPercent / 100);
+            const totalWeight = netWeight + fireLossWeight;
+            
+            // 计算费用
+            const materialCost = totalWeight * unitPrice;
+            const totalPrice = materialCost + processingFee;
+            
+            // 显示结果
+            document.getElementById('result-volume').textContent = volume.toFixed(2) + ' cm³';
+            document.getElementById('result-net-weight').textContent = netWeight.toFixed(2) + ' kg';
+            document.getElementById('result-fire-loss').textContent = fireLossWeight.toFixed(2) + ' kg';
+            document.getElementById('result-total-weight').textContent = totalWeight.toFixed(2) + ' kg';
+            document.getElementById('result-material-cost').textContent = '¥' + materialCost.toFixed(2);
+            document.getElementById('result-total-price').textContent = '¥' + totalPrice.toFixed(2);
+            
+            document.getElementById('results').classList.remove('hidden');
+            
+            // 滚动到结果区域
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 重置表单
+        function resetForm() {
+            if (confirm('确定要重置所有输入吗？')) {
+                document.querySelectorAll('input[type="number"]').forEach(input => {
+                    if (input.id !== 'fire-loss' && input.id !== 'processing-fee') {
+                        input.value = '';
+                    }
+                });
+                document.getElementById('fire-loss').value = 5;
+                document.getElementById('processing-fee').value = 0;
+                document.getElementById('has-hole').checked = false;
+                document.getElementById('hole-inputs').classList.add('hidden');
+                document.getElementById('results').classList.add('hidden');
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以在这里添加初始化代码
+            console.log('锻件算重报价系统已加载');
+        });
+    </script>
+</body>
+</html>

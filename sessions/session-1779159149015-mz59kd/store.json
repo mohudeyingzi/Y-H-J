@@ -1,0 +1,25 @@
+{
+  "id": "session-1779159149015-mz59kd",
+  "name": "锻算师老郑Agent",
+  "status": "active",
+  "createdAt": "2026-05-19T03:19:14.245Z",
+  "updatedAt": "2026-05-19T03:19:14.245Z",
+  "agents": [
+    {
+      "id": "agent_g2knqs20",
+      "name": "agent-01a02866",
+      "role": "assistant",
+      "status": "idle",
+      "createdAt": "2026-05-19T03:19:14.245Z",
+      "model": "unknown",
+      "systemPrompt": ""
+    }
+  ],
+  "summary": {
+    "id": "summary_752wdw2m",
+    "title": "锻算师老郑Agent",
+    "createdAt": "2026-05-19T03:19:14.245Z",
+    "file": "summary_752wdw2m.md"
+  },
+  "lastMessageCount": 27
+}

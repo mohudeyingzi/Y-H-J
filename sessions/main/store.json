@@ -1,0 +1,25 @@
+{
+  "id": "main",
+  "name": "Claude Code配置",
+  "status": "active",
+  "createdAt": "2026-05-16T01:33:57.279Z",
+  "updatedAt": "2026-05-16T03:13:43.728Z",
+  "agents": [
+    {
+      "id": "agent_3mphgq2z",
+      "name": "Main Agent",
+      "role": "assistant",
+      "status": "idle",
+      "createdAt": "2026-05-16T01:33:57.279Z",
+      "model": "unknown",
+      "systemPrompt": ""
+    }
+  ],
+  "summary": {
+    "id": "summary_x4cyzswp",
+    "title": "Claude Code配置",
+    "createdAt": "2026-05-16T01:33:57.279Z",
+    "file": "summary_x4cyzswp.md"
+  },
+  "lastMessageCount": 184
+}

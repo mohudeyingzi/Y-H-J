@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>锻件算重报价系统 - 高级版</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-add {
+            padding: 8px 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-add:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .shape-list {
+            margin-bottom: 20px;
+        }
+
+        .shape-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .shape-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .shape-title {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .btn-remove {
+            padding: 5px 10px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-remove:hover {
+            background: #ff3838;
+        }
+
+        .dimension-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group-inline {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .form-group-inline .form-group {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .results-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            font-size: 20px;
+            font-weight: bold;
+            padding-top: 20px;
+        }
+
+        .result-label {
+            opacity: 0.9;
+        }
+
+        .result-value {
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .summary {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .summary-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .dimension-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group-inline {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ 锻件算重报价系统 - 高级版</h1>
+            <p>支持多段圆柱形、多段方形、多个不同冲孔</p>
+        </div>
+
+        <div class="content">
+            <!-- 圆柱形部分 -->
+            <div class="section">
+                <div class="section-title">
+                    <span>📊 圆柱形段 (可添加多段)</span>
+                    <button class="btn-add" onclick="addCylinder()">+ 添加圆柱</button>
+                </div>
+                <div id="cylinder-list" class="shape-list">
+                    <!-- 动态添加圆柱形输入 -->
+                </div>
+            </div>
+
+            <!-- 方形部分 -->
+            <div class="section">
+                <div class="section-title">
+                    <span>📐 方形段 (可添加多段)</span>
+                    <button class="btn-add" onclick="addRectangular()">+ 添加方形</button>
+                </div>
+                <div id="rectangular-list" class="shape-list">
+                    <!-- 动态添加方形输入 -->
+                </div>
+            </div>
+
+            <!-- 冲孔部分 -->
+            <div class="section">
+                <div class="section-title">
+                    <span>🕳️ 冲孔 (可添加多个)</span>
+                    <button class="btn-add" onclick="addHole()">+ 添加冲孔</button>
+                </div>
+                <div id="hole-list" class="shape-list">
+                    <!-- 动态添加冲孔输入 -->
+                </div>
+            </div>
+
+            <!-- 材料和报价信息 -->
+            <div class="section">
+                <div class="section-title">⚙️ 材料与报价信息</div>
+                
+                <div class="form-group">
+                    <label for="material">选择材料</label>
+                    <select id="material">
+                        <option value="7.85">碳钢 (密度: 7.85 g/cm³)</option>
+                        <option value="7.93">不锈钢 (密度: 7.93 g/cm³)</option>
+                        <option value="2.7">铝合金 (密度: 2.7 g/cm³)</option>
+                        <option value="8.96">铜 (密度: 8.96 g/cm³)</option>
+                    </select>
+                </div>
+
+                <div class="form-group-inline">
+                    <div class="form-group">
+                        <label for="fire-loss">火耗率 (%)</label>
+                        <input type="number" id="fire-loss" step="0.1" value="5" placeholder="例如: 5">
+                    </div>
+                    <div class="form-group">
+                        <label for="unit-price">材料单价 (元/kg)</label>
+                        <input type="number" id="unit-price" step="0.01" placeholder="例如: 10">
+                    </div>
+                    <div class="form-group">
+                        <label for="processing-fee">加工费 (元)</label>
+                        <input type="number" id="processing-fee" step="0.01" value="0" placeholder="例如: 100">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="calculate()">🔢 开始计算</button>
+            <button class="btn btn-secondary" onclick="resetAll()">🔄 重置所有</button>
+
+            <div id="results" class="results hidden">
+                <div class="results-title">📊 计算结果</div>
+                <div class="result-item">
+                    <span class="result-label">圆柱总体积:</span>
+                    <span class="result-value" id="result-cylinder-volume">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">方形总体积:</span>
+                    <span class="result-value" id="result-rect-volume">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总体积 (含孔):</span>
+                    <span class="result-value" id="result-total-volume">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">净重:</span>
+                    <span class="result-value" id="result-net-weight">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">火耗重量:</span>
+                    <span class="result-value" id="result-fire-loss">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总重:</span>
+                    <span class="result-value" id="result-total-weight">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">材料费用:</span>
+                    <span class="result-value" id="result-material-cost">-</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">总报价:</span>
+                    <span class="result-value" id="result-total-price">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cylinderCount = 0;
+        let rectangularCount = 0;
+        let holeCount = 0;
+
+        // 添加圆柱形
+        function addCylinder() {
+            cylinderCount++;
+            const cylinderList = document.getElementById('cylinder-list');
+            
+            const cylinderItem = document.createElement('div');
+            cylinderItem.className = 'shape-item';
+            cylinderItem.id = `cylinder-${cylinderCount}`;
+            cylinderItem.innerHTML = `
+                <div class="shape-header">
+                    <span class="shape-title">圆柱 ${cylinderCount}</span>
+                    <button class="btn-remove" onclick="removeItem('cylinder-${cylinderCount}')">删除</button>
+                </div>
+                <div class="dimension-inputs">
+                    <div class="form-group">
+                        <label>直径 (cm)</label>
+                        <input type="number" id="cylinder-diameter-${cylinderCount}" step="0.1" placeholder="例如: 10">
+                    </div>
+                    <div class="form-group">
+                        <label>高度 (cm)</label>
+                        <input type="number" id="cylinder-height-${cylinderCount}" step="0.1" placeholder="例如: 5">
+                    </div>
+                </div>
+            `;
+            
+            cylinderList.appendChild(cylinderItem);
+        }
+
+        // 添加方形
+        function addRectangular() {
+            rectangularCount++;
+            const rectangularList = document.getElementById('rectangular-list');
+            
+            const rectangularItem = document.createElement('div');
+            rectangularItem.className = 'shape-item';
+            rectangularItem.id = `rectangular-${rectangularCount}`;
+            rectangularItem.innerHTML = `
+                <div class="shape-header">
+                    <span class="shape-title">方形 ${rectangularCount}</span>
+                    <button class="btn-remove" onclick="removeItem('rectangular-${rectangularCount}')">删除</button>
+                </div>
+                <div class="dimension-inputs">
+                    <div class="form-group">
+                        <label>长度 (cm)</label>
+                        <input type="number" id="rect-length-${rectangularCount}" step="0.1" placeholder="例如: 10">
+                    </div>
+                    <div class="form-group">
+                        <label>宽度 (cm)</label>
+                        <input type="number" id="rect-width-${rectangularCount}" step="0.1" placeholder="例如: 8">
+                    </div>
+                    <div class="form-group">
+                        <label>高度 (cm)</label>
+                        <input type="number" id="rect-height-${rectangularCount}" step="0.1" placeholder="例如: 5">
+                    </div>
+                </div>
+            `;
+            
+            rectangularList.appendChild(rectangularItem);
+        }
+
+        // 添加冲孔
+        function addHole() {
+            holeCount++;
+            const holeList = document.getElementById('hole-list');
+            
+            const holeItem = document.createElement('div');
+            holeItem.className = 'shape-item';
+            holeItem.id = `hole-${holeCount}`;
+            holeItem.innerHTML = `
+                <div class="shape-header">
+                    <span class="shape-title">冲孔 ${holeCount}</span>
+                    <button class="btn-remove" onclick="removeItem('hole-${holeCount}')">删除</button>
+                </div>
+                <div class="dimension-inputs">
+                    <div class="form-group">
+                        <label>孔径 (cm)</label>
+                        <input type="number" id="hole-diameter-${holeCount}" step="0.1" placeholder="例如: 2">
+                    </div>
+                    <div class="form-group">
+                        <label>孔深 (cm)</label>
+                        <input type="number" id="hole-depth-${holeCount}" step="0.1" placeholder="例如: 5">
+                    </div>
+                </div>
+            `;
+            
+            holeList.appendChild(holeItem);
+        }
+
+        // 删除项目
+        function removeItem(id) {
+            const item = document.getElementById(id);
+            if (item) {
+                item.remove();
+            }
+        }
+
+        // 计算体积
+        function calculateVolume() {
+            let totalVolume = 0;
+            let cylinderVolume = 0;
+            let rectVolume = 0;
+            let holeVolume = 0;
+
+            // 计算所有圆柱体积
+            for (let i = 1; i <= cylinderCount; i++) {
+                const diameter = parseFloat(document.getElementById(`cylinder-diameter-${i}`)?.value);
+                const height = parseFloat(document.getElementById(`cylinder-height-${i}`)?.value);
+                
+                if (diameter && height) {
+                    const radius = diameter / 2;
+                    const vol = Math.PI * radius * radius * height;
+                    cylinderVolume += vol;
+                }
+            }
+
+            // 计算所有方形体积
+            for (let i = 1; i <= rectangularCount; i++) {
+                const length = parseFloat(document.getElementById(`rect-length-${i}`)?.value);
+                const width = parseFloat(document.getElementById(`rect-width-${i}`)?.value);
+                const height = parseFloat(document.getElementById(`rect-height-${i}`)?.value);
+                
+                if (length && width && height) {
+                    const vol = length * width * height;
+                    rectVolume += vol;
+                }
+            }
+
+            // 计算所有冲孔体积（要减去）
+            for (let i = 1; i <= holeCount; i++) {
+                const diameter = parseFloat(document.getElementById(`hole-diameter-${i}`)?.value);
+                const depth = parseFloat(document.getElementById(`hole-depth-${i}`)?.value);
+                
+                if (diameter && depth) {
+                    const radius = diameter / 2;
+                    const vol = Math.PI * radius * radius * depth;
+                    holeVolume += vol;
+                }
+            }
+
+            totalVolume = cylinderVolume + rectVolume - holeVolume;
+
+            return {
+                cylinderVolume,
+                rectVolume,
+                holeVolume,
+                totalVolume
+            };
+        }
+
+        // 主计算函数
+        function calculate() {
+            const volumes = calculateVolume();
+            
+            if (volumes.totalVolume <= 0) {
+                alert('请至少添加一个有效的形状（圆柱或方形），且总体积大于0！');
+                return;
+            }
+
+            const density = parseFloat(document.getElementById('material').value);
+            const fireLossPercent = parseFloat(document.getElementById('fire-loss').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('unit-price').value) || 0;
+            const processingFee = parseFloat(document.getElementById('processing-fee').value) || 0;
+            
+            // 计算重量
+            const netWeight = volumes.totalVolume * density / 1000; // 转换为kg
+            const fireLossWeight = netWeight * (fireLossPercent / 100);
+            const totalWeight = netWeight + fireLossWeight;
+            
+            // 计算费用
+            const materialCost = totalWeight * unitPrice;
+            const totalPrice = materialCost + processingFee;
+            
+            // 显示结果
+            document.getElementById('result-cylinder-volume').textContent = volumes.cylinderVolume.toFixed(2) + ' cm³';
+            document.getElementById('result-rect-volume').textContent = volumes.rectVolume.toFixed(2) + ' cm³';
+            document.getElementById('result-total-volume').textContent = volumes.totalVolume.toFixed(2) + ' cm³';
+            document.getElementById('result-net-weight').textContent = netWeight.toFixed(2) + ' kg';
+            document.getElementById('result-fire-loss').textContent = fireLossWeight.toFixed(2) + ' kg';
+            document.getElementById('result-total-weight').textContent = totalWeight.toFixed(2) + ' kg';
+            document.getElementById('result-material-cost').textContent = '¥' + materialCost.toFixed(2);
+            document.getElementById('result-total-price').textContent = '¥' + totalPrice.toFixed(2);
+            
+            document.getElementById('results').classList.remove('hidden');
+            
+            // 滚动到结果区域
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 重置所有
+        function resetAll() {
+            if (confirm('确定要重置所有输入吗？这将删除所有添加的形状和冲孔。')) {
+                // 清空所有列表
+                document.getElementById('cylinder-list').innerHTML = '';
+                document.getElementById('rectangular-list').innerHTML = '';
+                document.getElementById('hole-list').innerHTML = '';
+                
+                // 重置计数器
+                cylinderCount = 0;
+                rectangularCount = 0;
+                holeCount = 0;
+                
+                // 重置输入
+                document.getElementById('fire-loss').value = 5;
+                document.getElementById('unit-price').value = '';
+                document.getElementById('processing-fee').value = 0;
+                
+                // 隐藏结果
+                document.getElementById('results').classList.add('hidden');
+            }
+        }
+
+        // 页面加载时添加一个默认的圆柱和方形
+        document.addEventListener('DOMContentLoaded', function() {
+            addCylinder();
+            addRectangular();
+        });
+    </script>
+</body>
+</html>

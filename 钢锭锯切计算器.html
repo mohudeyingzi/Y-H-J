@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方形锥度钢锭锯切计算器</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #e0e0e0;
+}
+.container {
+  background: #1e2a3a;
+  border-radius: 20px;
+  padding: 36px;
+  width: 100%;
+  max-width: 820px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+}
+h1 {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #f7971e, #ffd200);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  text-align: center;
+  color: #8899aa;
+  font-size: 13px;
+  margin-bottom: 28px;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #f7971e;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2a3a4f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+  background: #f7971e;
+  border-radius: 2px;
+}
+.param-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 8px;
+}
+.param-group {
+  background: #243447;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #2a3a4f;
+}
+.param-group.full {
+  grid-column: 1 / -1;
+}
+.param-group label {
+  display: block;
+  font-size: 12px;
+  color: #8899aa;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.param-group .input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.param-group input {
+  flex: 1;
+  background: #1a2733;
+  border: 1px solid #2a3a4f;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 18px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: 600;
+  transition: all 0.2s;
+  min-width: 0;
+}
+.param-group input:focus {
+  outline: none;
+  border-color: #f7971e;
+  box-shadow: 0 0 0 3px rgba(247,151,30,0.15);
+}
+.param-group .unit {
+  font-size: 13px;
+  color: #8899aa;
+  white-space: nowrap;
+}
+.dim-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.dim-row input {
+  width: 90px;
+  flex: none;
+}
+.dim-row span {
+  color: #5a6a7a;
+  font-size: 14px;
+}
+.cut-section {
+  margin-top: 8px;
+}
+.radio-group {
+  display: flex;
+  gap: 10px;
+}
+.radio-option {
+  flex: 1;
+  background: #243447;
+  border: 2px solid #2a3a4f;
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.radio-option:hover {
+  border-color: #3a4a5f;
+  background: #2a3a4f;
+}
+.radio-option.active {
+  border-color: #f7971e;
+  background: rgba(247,151,30,0.1);
+}
+.radio-option .icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.radio-option .label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ccc;
+}
+.radio-option.active .label {
+  color: #f7971e;
+}
+.radio-option .hint {
+  font-size: 11px;
+  color: #667788;
+  margin-top: 2px;
+}
+.btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.btn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: inherit;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #f7971e, #e67e22);
+  color: #1a1a2e;
+  box-shadow: 0 4px 15px rgba(247,151,30,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(247,151,30,0.4);
+}
+.btn-secondary {
+  background: #243447;
+  color: #8899aa;
+  border: 1px solid #2a3a4f;
+}
+.btn-secondary:hover {
+  background: #2a3a4f;
+  color: #ccc;
+}
+.result-section {
+  margin-top: 20px;
+  display: none;
+}
+.result-section.show {
+  display: block;
+}
+.result-card {
+  background: linear-gradient(135deg, #1a3a2a, #0f2a1a);
+  border: 2px solid #27ae60;
+  border-radius: 16px;
+  padding: 24px;
+}
+.result-card h2 {
+  font-size: 18px;
+  color: #2ecc71;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.result-item {
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  padding: 14px;
+}
+.result-item .r-label {
+  font-size: 11px;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.result-item .r-value {
+  font-size: 26px;
+  font-weight: 700;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+.result-item .r-value.highlight {
+  color: #f7971e;
+  font-size: 32px;
+}
+.result-item .r-value.green {
+  color: #2ecc71;
+}
+.result-item .r-sub {
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 2px;
+}
+.viz-section {
+  margin-top: 18px;
+}
+.viz-section canvas {
+  width: 100%;
+  border-radius: 12px;
+  background: #1a2733;
+  display: block;
+}
+@media (max-width: 600px) {
+  .container { padding: 20px; }
+  .param-grid { grid-template-columns: 1fr; }
+  .result-grid { grid-template-columns: 1fr; }
+  h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>方形锥度钢锭 · 锯切长度计算</h1>
+  <p class="subtitle">截锥体钢锭按重量精确计算锯切长度</p>
+
+  <div class="section-title">钢锭参数</div>
+  <div class="param-grid">
+    <div class="param-group">
+      <label>大头（宽 x 高）</label>
+      <div class="dim-row">
+        <input type="number" id="largeW" value="595" step="0.1">
+        <span>&times;</span>
+        <input type="number" id="largeH" value="597" step="0.1">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+    <div class="param-group">
+      <label>小头（宽 x 高）</label>
+      <div class="dim-row">
+        <input type="number" id="smallW" value="490" step="0.1">
+        <span>&times;</span>
+        <input type="number" id="smallH" value="490" step="0.1">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+    <div class="param-group">
+      <label>钢锭总高</label>
+      <div class="input-row">
+        <input type="number" id="totalH" value="1353" step="0.1">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+    <div class="param-group">
+      <label>钢锭总重量</label>
+      <div class="input-row">
+        <input type="number" id="totalWt" value="3347" step="0.1">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">锯切参数</div>
+  <div class="param-grid">
+    <div class="param-group">
+      <label>目标锯切重量</label>
+      <div class="input-row">
+        <input type="number" id="targetWt" value="1040" step="0.1">
+        <span class="unit">kg</span>
+      </div>
+    </div>
+    <div class="param-group cut-section">
+      <label>锯切方向</label>
+      <div class="radio-group">
+        <div class="radio-option active" id="optLarge" onclick="selectCutDir('large')">
+          <div class="icon">&#9660;</div>
+          <div class="label">从大头锯切</div>
+          <div class="hint">595&times;597 端</div>
+        </div>
+        <div class="radio-option" id="optSmall" onclick="selectCutDir('small')">
+          <div class="icon">&#9650;</div>
+          <div class="label">从小头锯切</div>
+          <div class="hint">490&times;490 端</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="calculate()">计算锯切长度</button>
+    <button class="btn btn-secondary" onclick="resetAll()">恢复默认</button>
+  </div>
+
+  <div class="result-section" id="resultSection">
+    <div class="result-card">
+      <h2>计算结果</h2>
+      <div class="result-grid">
+        <div class="result-item">
+          <div class="r-label">锯切长度</div>
+          <div class="r-value highlight" id="rCutLen">--</div>
+          <div class="r-sub" id="rCutLenInch"></div>
+        </div>
+        <div class="result-item">
+          <div class="r-label">钢锭剩余高度</div>
+          <div class="r-value green" id="rRemainH">--</div>
+          <div class="r-sub" id="rRemainPct"></div>
+        </div>
+        <div class="result-item">
+          <div class="r-label">锯下重量（理论）</div>
+          <div class="r-value green" id="rCutWt">--</div>
+          <div class="r-sub">截锥体积 x 密度</div>
+        </div>
+        <div class="result-item">
+          <div class="r-label">剩余重量</div>
+          <div class="r-value green" id="rRemainWt">--</div>
+          <div class="r-sub">总重 - 锯下重</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:#7f8c8d;line-height:1.6" id="rDetail"></div>
+    </div>
+  </div>
+
+  <div class="viz-section" id="vizSection" style="display:none;">
+    <canvas id="vizCanvas"></canvas>
+  </div>
+</div>
+
+<script>
+var cutDir = 'large';
+
+function selectCutDir(dir) {
+  cutDir = dir;
+  document.getElementById('optLarge').classList.toggle('active', dir==='large');
+  document.getElementById('optSmall').classList.toggle('active', dir==='small');
+}
+
+function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+function calculate() {
+  var LW = getVal('largeW');
+  var LH = getVal('largeH');
+  var SW = getVal('smallW');
+  var SH = getVal('smallH');
+  var H  = getVal('totalH');
+  var TW = getVal('totalWt');
+  var CW = getVal('targetWt');
+
+  if (LW<=0||LH<=0||SW<=0||SH<=0||H<=0||TW<=0||CW<=0) {
+    alert('请填写所有参数（均需大于0）');
+    return;
+  }
+  if (CW >= TW * 0.999) {
+    alert('锯切重量过大，接近或超过总重量');
+    return;
+  }
+
+  var A_large = LW * LH;
+  var A_small = SW * SH;
+  var V_total = H / 3 * (A_large + A_small + Math.sqrt(A_large * A_small));
+  var density = TW / (V_total / 1e9);
+  var V_target = (CW / density) * 1e9;
+
+  var kw = (SW - LW) / H;
+  var kh = (SH - LH) / H;
+
+  function volLarge(h) {
+    var a0 = LW * LH;
+    var a1 = LW * kh + LH * kw;
+    var a2 = kw * kh;
+    return a0*h + a1*h*h/2 + a2*h*h*h/3;
+  }
+
+  function volSmall(h) {
+    var kw2 = (LW - SW) / H;
+    var kh2 = (LH - SH) / H;
+    var a0 = SW * SH;
+    var a1 = SW * kh2 + SH * kw2;
+    var a2 = kw2 * kh2;
+    return a0*h + a1*h*h/2 + a2*h*h*h/3;
+  }
+
+  var volFn = (cutDir === 'large') ? volLarge : volSmall;
+  var lo = 0, hi = H;
+  for (var i = 0; i < 80; i++) {
+    var mid = (lo + hi) / 2;
+    if (volFn(mid) < V_target) lo = mid;
+    else hi = mid;
+  }
+  var cutLen = (lo + hi) / 2;
+
+  var A_cut, V_cut, W_cut;
+  if (cutDir === 'large') {
+    var cw_end = LW + kw * cutLen;
+    var ch_end = LH + kh * cutLen;
+    A_cut = cw_end * ch_end;
+    V_cut = cutLen / 3 * (A_large + A_cut + Math.sqrt(A_large * A_cut));
+  } else {
+    var cw_end2 = SW + (LW-SW)/H * cutLen;
+    var ch_end2 = SH + (LH-SH)/H * cutLen;
+    A_cut = cw_end2 * ch_end2;
+    V_cut = cutLen / 3 * (A_small + A_cut + Math.sqrt(A_small * A_cut));
+  }
+  W_cut = V_cut / 1e9 * density;
+
+  var remainH = H - cutLen;
+  var remainWt = TW - W_cut;
+
+  document.getElementById('rCutLen').textContent = cutLen.toFixed(2) + ' mm';
+  document.getElementById('rCutLenInch').textContent = '约 ' + (cutLen/25.4).toFixed(2) + ' 英寸';
+  document.getElementById('rRemainH').textContent = remainH.toFixed(2) + ' mm';
+  document.getElementById('rRemainPct').textContent = '占总高 ' + (remainH/H*100).toFixed(1) + '%';
+  document.getElementById('rCutWt').textContent = W_cut.toFixed(2) + ' kg';
+  document.getElementById('rRemainWt').textContent = remainWt.toFixed(2) + ' kg';
+
+  var dirLabel = (cutDir === 'large') ? '大头' : '小头';
+  var cutEnd = (cutDir === 'large') ? '小头方向' : '大头方向';
+  var detail = '从钢锭<b>' + dirLabel + '</b>沿' + cutEnd + '锯切 <b>' + cutLen.toFixed(1) + ' mm</b> ';
+  detail += '即可得到约 <b>' + W_cut.toFixed(1) + ' kg</b> 的料段。<br>';
+  detail += '钢锭材质密度约 <b>' + density.toFixed(1) + ' kg/m&sup3;</b>。<br>';
+  detail += '<span style=\"color:#e74c3c\">实际切割请考虑锯缝损耗（约2-5mm），建议略减锯切长度。</span>';
+  document.getElementById('rDetail').innerHTML = detail;
+
+  document.getElementById('resultSection').classList.add('show');
+  document.getElementById('vizSection').style.display = 'block';
+
+  drawViz(LW, LH, SW, SH, H, cutLen, TW, CW, W_cut, density, cutDir);
+}
+
+function drawViz(LW, LH, SW, SH, H, cutLen, TW, CW, W_cut, density, dir) {
+  var canvas = document.getElementById('vizCanvas');
+  var dpr = window.devicePixelRatio || 1;
+  var rect = canvas.parentElement.getBoundingClientRect();
+  var W = rect.width;
+  canvas.width = W * dpr;
+  canvas.height = 360 * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = '360px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  var pad = { top: 45, bottom: 40, left: 100, right: 100 };
+  var pw = W - pad.left - pad.right;
+  var ph = 360 - pad.top - pad.bottom;
+
+  var scaleH = ph / H;
+  var cx = pad.left + pw / 2;
+
+  function toX(w) { return cx - w * scaleH / 2; }
+  function toY(h) { return pad.top + ph - h * scaleH; }
+  function toW(w) { return w * scaleH; }
+
+  var yTop = toY(H);
+  var yBot = toY(0);
+  var xTopL = toX(SW);
+  var xTopR = xTopL + toW(SW);
+  var xBotL = toX(LW);
+  var xBotR = xBotL + toW(LW);
+
+  ctx.clearRect(0, 0, W, 360);
+
+  // background
+  ctx.fillStyle = '#1a2733';
+  ctx.fillRect(pad.left-15, pad.top-15, pw+30, ph+30);
+
+  // grid lines
+  ctx.strokeStyle = '#2a3a4f';
+  ctx.lineWidth = 0.5;
+  var step = Math.ceil(H / 6 / 100) * 100;
+  for (var hh = 0; hh <= H; hh += step) {
+    var gy = toY(hh);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, gy);
+    ctx.lineTo(pad.left+pw, gy);
+    ctx.stroke();
+
+    ctx.fillStyle = '#3a4a5f';
+    ctx.font = '10px Consolas';
+    ctx.textAlign = 'right';
+    ctx.fillText(hh + '', pad.left-6, gy+3);
+  }
+
+  // ingot body
+  ctx.fillStyle = '#3a4a5f';
+  ctx.beginPath();
+  ctx.moveTo(xBotL, yBot);
+  ctx.lineTo(xBotR, yBot);
+  ctx.lineTo(xTopR, yTop);
+  ctx.lineTo(xTopL, yTop);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = '#5a6a7f';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // cut portion highlight
+  var hlTop, hlBot;
+  if (dir === 'large') { hlTop = toY(cutLen); hlBot = yBot; }
+  else { hlTop = yTop; hlBot = toY(H - cutLen); }
+
+  var hlTt = (dir === 'large') ? (cutLen/H) : 0;
+  var hlBt = (dir === 'large') ? 0 : (1 - cutLen/H);
+  var hlTW = SW + (LW - SW) * (1 - hlTt);
+  var hlBW = SW + (LW - SW) * (1 - hlBt);
+  var hlTXL = toX(hlTW), hlTXR = hlTXL + toW(hlTW);
+  var hlBXL = toX(hlBW), hlBXR = hlBXL + toW(hlBW);
+
+  ctx.fillStyle = 'rgba(247, 151, 30, 0.28)';
+  ctx.beginPath();
+  ctx.moveTo(hlBXL, hlBot);
+  ctx.lineTo(hlBXR, hlBot);
+  ctx.lineTo(hlTXR, hlTop);
+  ctx.lineTo(hlTXL, hlTop);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = '#f7971e';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // cut line dashed
+  var cutY = (dir === 'large') ? toY(cutLen) : toY(H - cutLen);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pad.left, cutY);
+  ctx.lineTo(pad.left+pw, cutY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // labels
+  ctx.fillStyle = '#8899aa';
+  ctx.font = '12px "Microsoft YaHei"';
+  ctx.textAlign = 'center';
+
+  // large end label
+  ctx.fillText(LW.toFixed(0) + ' x ' + LH.toFixed(0) + ' mm (' + '\u5927\u5934' + ')', cx, yBot + 26);
+
+  // small end label
+  ctx.fillText(SW.toFixed(0) + ' x ' + SH.toFixed(0) + ' mm (' + '\u5c0f\u5934' + ')', cx, yTop - 12);
+
+  // height dimension line
+  var hLineX = Math.max(xBotR, xTopR) + 45;
+  ctx.strokeStyle = '#5a6a7f';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  ctx.moveTo(hLineX, yTop);
+  ctx.lineTo(hLineX, yBot);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // arrows
+  ctx.strokeStyle = '#5a6a7f';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(hLineX-5, yTop+10);
+  ctx.lineTo(hLineX, yTop);
+  ctx.lineTo(hLineX+5, yTop+10);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(hLineX-5, yBot-10);
+  ctx.lineTo(hLineX, yBot);
+  ctx.lineTo(hLineX+5, yBot-10);
+  ctx.stroke();
+
+  ctx.fillStyle = '#8899aa';
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 11px Consolas';
+  var hMidY = (yTop + yBot) / 2;
+  ctx.fillText(H.toFixed(0) + ' mm', hLineX + 8, hMidY + 4);
+
+  // cut segment annotation
+  var cutMidY = (hlTop + hlBot) / 2;
+  var cutTextX = Math.min(hlBXL, hlTXL) - 55;
+
+  ctx.fillStyle = '#f7971e';
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 14px "Microsoft YaHei"';
+  ctx.fillText(cutLen.toFixed(1) + ' mm', cutTextX, cutMidY + 4);
+  ctx.font = 'bold 11px "Microsoft YaHei"';
+  ctx.fillText(W_cut.toFixed(1) + ' kg', cutTextX, cutMidY + 21);
+
+  // remain segment annotation
+  var remainTopY, remainBotY;
+  if (dir === 'large') { remainTopY = yTop; remainBotY = cutY; }
+  else { remainTopY = cutY; remainBotY = yBot; }
+  var remainMidY = (remainTopY + remainBotY) / 2;
+
+  ctx.fillStyle = '#2ecc71';
+  ctx.textAlign = 'right';
+  ctx.font = 'bold 13px "Microsoft YaHei"';
+  ctx.fillText((H-cutLen).toFixed(1) + ' mm', cutTextX, remainMidY + 4);
+  ctx.font = 'bold 11px "Microsoft YaHei"';
+  ctx.fillText('\u5269\u4f59 ' + (TW-W_cut).toFixed(0) + ' kg', cutTextX, remainMidY + 21);
+
+  // legends
+  var legX = pad.left;
+  var legY = pad.top - 14;
+  ctx.fillStyle = 'rgba(247,151,30,0.28)';
+  ctx.fillRect(legX, legY-10, 14, 14);
+  ctx.strokeStyle = '#f7971e';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(legX, legY-10, 14, 14);
+  ctx.fillStyle = '#f7971e';
+  ctx.textAlign = 'left';
+  ctx.font = '11px "Microsoft YaHei"';
+  ctx.fillText('\u952f\u5207\u6bb5\uff08' + CW.toFixed(0) + ' kg\uff09', legX + 20, legY);
+
+  var leg2X = legX + 160;
+  ctx.fillStyle = '#3a4a5f';
+  ctx.fillRect(leg2X, legY-10, 14, 14);
+  ctx.strokeStyle = '#5a6a7f';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(leg2X, legY-10, 14, 14);
+  ctx.fillStyle = '#8899aa';
+  ctx.fillText('\u5269\u4f59\u6bb5\uff08' + (TW-CW).toFixed(0) + ' kg\uff09', leg2X + 20, legY);
+
+  // density note
+  ctx.fillStyle = '#5a6a7f';
+  ctx.font = '10px "Microsoft YaHei"';
+  ctx.textAlign = 'right';
+  ctx.fillText('\u5bc6\u5ea6 ' + density.toFixed(0) + ' kg/m\u00b3', pad.left+pw, pad.top-3);
+}
+
+function resetAll() {
+  document.getElementById('largeW').value = 595;
+  document.getElementById('largeH').value = 597;
+  document.getElementById('smallW').value = 490;
+  document.getElementById('smallH').value = 490;
+  document.getElementById('totalH').value = 1353;
+  document.getElementById('totalWt').value = 3347;
+  document.getElementById('targetWt').value = 1040;
+  selectCutDir('large');
+  document.getElementById('resultSection').classList.remove('show');
+  document.getElementById('vizSection').style.display = 'none';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+});
+
+window.addEventListener('resize', function() {
+  if (document.getElementById('resultSection').classList.contains('show')) {
+    calculate();
+  }
+});
+</script>
+</body>
+</html>
