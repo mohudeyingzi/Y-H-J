@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>袁红军的工作搭子</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1a3a5c;--accent:#2563eb;--red:#dc2626;--green:#16a34a;--orange:#d97706;--bg:#f1f5f9;--card:#fff;--border:#cbd5e1;--muted:#64748b}
+body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-serif;background:var(--bg);color:#1e293b;padding:16px;line-height:1.5;min-width:1200px}
+.container{max-width:1200px;margin:0 auto}
+
+.header{background:linear-gradient(135deg,var(--primary),#2d5a8a);color:#fff;padding:18px 28px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:22px;font-weight:700;letter-spacing:1px}
+.header .ver{font-size:11px;opacity:.7;background:rgba(255,255,255,.15);padding:2px 8px;border-radius:4px}
+
+.card{background:var(--card);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:12px;overflow:hidden;border:1px solid #e2e8f0}
+
+/* 顶部信息 */
+.info-grid{display:grid;gap:0}
+.info-row-1{grid-template-columns:repeat(5,1fr)}
+.info-row-2{grid-template-columns:repeat(5,1fr)}
+.info-cell{padding:10px 14px;border-right:1px solid #e2e8f0}
+.info-cell:last-child{border-right:none}
+.info-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.info-input{width:100%;padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:13px;text-align:center;transition:border-color .2s,box-shadow .2s}
+.info-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.info-input[readonly]{background:#f8fafc;color:var(--red);font-weight:700;border-color:#e2e8f0}
+.info-input.highlight{color:var(--red);font-size:14px;font-weight:700}
+.info-select{width:100%;padding:7px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:13px;text-align:center;background:#fff;cursor:pointer}
+.info-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+
+/* 区域标题 */
+.sec-head{display:flex;align-items:center;padding:11px 18px;background:linear-gradient(135deg,var(--primary),#2d5a8a);color:#fff;font-size:13px;font-weight:600}
+.sec-head .btn-add{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.25);padding:5px 14px;border-radius:5px;font-size:11px;cursor:pointer;transition:all .2s;margin-left:126px;flex-shrink:0}
+.sec-head .btn-add:hover{background:rgba(255,255,255,.3)}
+
+/* 段卡片 */
+.segments{display:flex;flex-direction:column;gap:8px;padding:14px;background:#f8fafc}
+.segment{border:1px solid #e2e8f0;border-radius:8px;background:#fff;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.seg-header{display:flex;align-items:center;gap:12px;padding:9px 14px;background:#f8fafc;border-bottom:1px solid #f1f5f9}
+.seg-num{width:28px;height:28px;background:linear-gradient(135deg,var(--primary),#2d5a8a);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.seg-title{font-size:12px;font-weight:600;color:var(--primary)}
+.seg-del{margin-left:126px;background:#fee2e2;color:var(--red);border:1px solid #fecaca;padding:4px 12px;border-radius:5px;font-size:11px;cursor:pointer;flex-shrink:0;transition:all .15s}
+.seg-del:hover{background:#fecaca}
+
+.seg-body{padding:12px 14px}
+.seg-row{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.seg-row:last-child{margin-bottom:0}
+.seg-label{width:76px;font-size:11px;color:#64748b;font-weight:600;flex-shrink:0}
+.seg-label span{color:var(--orange)}
+
+.dim-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dim-item{display:flex;align-items:center;gap:4px}
+.dim-name{font-size:11px;color:var(--muted);width:36px;text-align:right}
+.dim-input{width:64px;padding:5px 7px;border:1.5px solid #e2e8f0;border-radius:5px;font-size:12px;text-align:center}
+.dim-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,.1)}
+.dim-allow{width:48px;padding:5px 7px;border:1.5px solid #e2e8f0;border-radius:5px;font-size:12px;text-align:center;background:#fffbeb}
+.dim-allow:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 2px rgba(217,119,6,.1)}
+.dim-unit{font-size:10px;color:var(--muted)}
+.seg-type-select{padding:4px 6px;border:1.5px solid var(--border);border-radius:4px;font-size:11px;background:#fff;color:var(--primary);font-weight:600;cursor:pointer;margin-right:8px}
+.seg-type-select:focus{outline:none;border-color:var(--accent)}
+
+.result-wrap{display:flex;align-items:center;gap:12px;margin-left:126px;flex-shrink:0}
+.result-box{display:flex;align-items:center;gap:6px}
+.result-label{font-size:10px;color:#64748b}
+.result-input{width:216px;padding:5px 8px;border:1.5px solid #fde68a;border-radius:5px;font-size:12px;text-align:center;background:#fffbeb;color:var(--red);font-weight:700}
+.result-input[readonly]{background:#fefce8}
+
+.seg-actual{background:#fffdf5}
+.seg-actual .seg-label{color:var(--orange)}
+.seg-actual .dim-input{background:#fff}
+.seg-hint{font-size:10px;color:var(--muted);margin-left:8px}
+
+/* 工具栏 */
+.toolbar{display:flex;gap:12px;justify-content:center;padding:16px;flex-wrap:wrap}
+.btn{padding:10px 28px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;box-shadow:0 2px 8px rgba(22,163,74,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(22,163,74,.35)}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;box-shadow:0 2px 8px rgba(239,68,68,.3)}
+.btn-danger:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(239,68,68,.35)}
+.btn-info{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.btn-info:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.35)}
+.btn-warn{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;box-shadow:0 2px 8px rgba(217,119,6,.3)}
+.btn-warn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(217,119,6,.35)}
+
+/* 结果汇总 */
+.result-card{background:var(--card);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;border:1px solid #e2e8f0;margin-bottom:20px}
+.result-head{background:linear-gradient(135deg,var(--primary),#2d5a8a);color:#fff;padding:12px 20px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.result-body{padding:2px 0}
+.r-row{display:grid;grid-template-columns:150px 1fr 120px 90px;align-items:center;padding:12px 20px;border-bottom:1px solid #f1f5f9;transition:background .15s}
+.r-row:last-child{border-bottom:none}
+.r-row:hover{background:#f0f4f8}
+.r-row.final{background:#fffbeb;padding:14px 20px}
+.r-row.final:hover{background:#fef9c3}
+.diff-highlight{font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,#f97316,#ef4444);padding:4px 14px;border-radius:16px;display:inline-block;letter-spacing:.3px;max-width:100%;white-space:nowrap;box-shadow:0 2px 6px rgba(239,68,68,.2)}
+.r-label{font-size:13px;font-weight:600;color:#1e293b;letter-spacing:.3px}
+.r-formula{font-size:12px;color:var(--muted);font-family:"Consolas","Courier New",monospace;padding:0 4px;line-height:1.3}
+#r_theory_size_f,#r_actual_size_f{max-width:454px;white-space:normal;word-break:break-all}
+#r_theory_size,#r_actual_size{display:none}
+.r-val{font-size:16px;font-weight:700;color:var(--red);text-align:center;white-space:nowrap;transform:translateX(-341px)}
+.r-note{font-size:11px;color:var(--muted);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r-input-wrap{display:flex;align-items:center;gap:6px}
+.r-input-wrap input{width:66px;padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:5px;font-size:14px;text-align:center;font-weight:600;color:var(--accent)}
+.r-input-wrap input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+
+/* 历史记录 */
+.rec-toolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+.rec-toolbar input{padding:7px 12px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:12px;width:200px}
+.rec-toolbar input:focus{outline:none;border-color:var(--accent)}
+.rec-count{font-size:12px;color:var(--muted);margin-left:auto}
+.rec-table{width:100%;border-collapse:collapse;font-size:12px}
+.rec-table th{background:#f1f5f9;padding:9px 7px;border-bottom:2px solid #e2e8f0;font-size:11px;color:#64748b;font-weight:600;white-space:nowrap;position:sticky;top:0;letter-spacing:.3px}
+.rec-table td{padding:6px 10px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:top}
+.rec-table tr:hover td{background:#f8fafc}
+.rec-table .rec-date{color:#64748b;max-width:95px;word-break:break-all;line-height:1.3}
+.rec-table .rec-cust{max-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-table .rec-name{max-width:110px;word-break:break-all;line-height:1.3}
+.rec-table .rec-mat{white-space:nowrap}
+.rec-table .rec-model{max-width:120px;word-break:break-all;line-height:1.3}
+.rec-table .rec-dwg{max-width:100px;word-break:break-all;line-height:1.3}
+.rec-table .rec-summary{text-align:center!important;max-width:480px;min-width:260px;word-break:break-word;font-size:10px;line-height:1.4}
+.rec-table .rec-wt{color:var(--red);font-weight:600;min-width:110px}
+.rec-table .rec-price{color:var(--green);font-weight:600}
+.rec-table .rec-actions{white-space:nowrap}
+.btn-sm{padding:5px 11px;border:none;border-radius:5px;font-size:11px;cursor:pointer;margin:1px}
+.btn-sm-print{background:#e0e7ff;color:var(--accent)}
+.btn-sm-print:hover{background:#c7d2fe}
+.btn-sm-del{background:#fee2e2;color:var(--red)}
+.btn-sm-del:hover{background:#fecaca}
+.btn-sm-load{background:#d1fae5;color:var(--green)}
+.btn-sm-load:hover{background:#a7f3d0}
+.btn-sm-export{background:#dbeafe;color:var(--accent)}
+.btn-sm-export:hover{background:#bfdbfe}
+.rec-date-input{padding:4px 6px;border:1.5px solid var(--border);border-radius:4px;font-size:11px;width:128px}
+.rec-date-input:focus{outline:none;border-color:var(--accent)}
+
+/* 导出列选择面板 */
+.export-panel{background:#f8fafc;border-top:1px solid #f1f5f9;padding:14px 18px}
+.export-panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:12px;font-weight:600;color:var(--primary)}
+.export-quick{font-weight:400}
+.export-quick a{color:var(--accent);text-decoration:none}
+.export-quick a:hover{text-decoration:underline}
+.export-cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 10px;margin-bottom:12px}
+.export-cols label{display:flex;align-items:center;gap:5px;font-size:11px;color:#334155;cursor:pointer}
+.export-cols input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px}
+.export-actions{display:flex;gap:8px;justify-content:flex-end}
+
+.rec-empty{padding:36px;text-align:center;color:#94a3b8;font-size:13px}
+.rec-scroll{max-height:420px;overflow-y:auto}
+
+/* 云同步面板 */
+.btn-sm-sync{background:#e0f2fe;color:#0369a1;margin-left:auto}
+.btn-sm-sync:hover{background:#bae6fd}
+.btn-sm-sync.syncing{animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.sync-panel{background:#f0f9ff;border-top:1px solid #bae6fd;padding:14px 18px}
+.sync-panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:13px;font-weight:600;color:#0369a1}
+.sync-status{font-size:11px;font-weight:400;color:var(--muted)}
+.sync-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sync-row label{font-size:12px;font-weight:500;white-space:nowrap;min-width:90px}
+.sync-row input{padding:6px 10px;border:1.5px solid #93c5fd;border-radius:5px;font-size:12px;min-width:280px}
+.sync-row input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.sync-hint{font-size:11px;color:#64748b;margin-bottom:10px;line-height:1.5;background:#fff;padding:8px 12px;border-radius:5px;border:1px dashed #93c5fd}
+.sync-actions{display:flex;gap:8px;flex-wrap:wrap}
+.sync-log{margin-top:10px;font-size:11px;color:#64748b;line-height:1.6;max-height:80px;overflow-y:auto}
+
+/* 导出确认弹窗 */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:12px 24px;border-radius:6px;font-
+
+/* 导入重复弹窗 */
+.dup-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.35);z-index:999;display:flex;align-items:center;justify-content:center}
+.dup-modal{background:#fff;border-radius:10px;padding:24px;max-width:560px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.dup-modal h3{font-size:15px;margin:0 0 8px}
+.dup-modal .dup-summary{font-size:13px;color:#64748b;margin-bottom:14px;line-height:1.6}
+.dup-modal .dup-item{font-size:12px;padding:8px 10px;margin:4px 0;background:#fff7ed;border-left:3px solid #f97316;border-radius:4px}
+.dup-modal .dup-item .dup-name{font-weight:600;color:#1e293b}
+.dup-modal .dup-item .dup-detail{color:#64748b;font-size:11px;margin-top:2px;line-height:1.4}
+.dup-modal .dup-actions{margin-top:16px;text-align:right}size:14px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2);opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.toast.error{background:#dc2626}
+
+/* 响应式 */
+@media(max-width:900px){
+  body{padding:8px;min-width:auto}
+  .header h1{font-size:17px}
+  .info-row-1{grid-template-columns:repeat(3,1fr)}
+  .info-row-2{grid-template-columns:repeat(3,1fr)}
+  .seg-row{gap:10px;flex-wrap:wrap}
+  .sec-head .btn-add{margin-left:20px}
+  .seg-del{margin-left:20px}
+  .r-row{grid-template-columns:100px 1fr 100px 70px;gap:4px;padding:10px 14px}
+  .r-val{font-size:13px}
+  .rec-table{font-size:10px}
+  .rec-toolbar input{width:120px}
+  .result-wrap{margin-left:60px}
+  .result-input{width:100px}
+}
+
+/* 手机竖屏专用 */
+@media(max-width:600px){
+  body{padding:4px;font-size:13px}
+  .header{padding:10px 12px}
+  .header h1{font-size:15px}
+  .header .ver{font-size:9px;padding:2px 6px}
+  .card{border-radius:8px;margin-bottom:12px}
+  .sec-head{padding:10px 12px;font-size:13px}
+  .sec-body{padding:10px 12px}
+  /* 信息区单列 */
+  .info-row-1,.info-row-2{grid-template-columns:repeat(2,1fr)}
+  .info-cell{padding:8px 10px}
+  .info-label{font-size:10px}
+  .info-input{width:100%}
+  /* 段区堆叠 */
+  .seg-row{flex-direction:column;align-items:stretch;gap:6px}
+  .seg-row .seg-label{width:100%;margin-bottom:2px}
+  .dim-wrap{flex-direction:column;align-items:stretch;gap:6px}
+  .dim-item{justify-content:space-between}
+  .dim-name{width:auto;text-align:left}
+  .dim-input{width:55px;font-size:11px}
+  .dim-allow{width:42px;font-size:11px}
+  .seg-actual{margin-top:8px}
+  /* 结果区单列 */
+  .result-wrap{margin-left:0;margin-top:10px;flex-direction:column;gap:6px;align-items:stretch}
+  .result-box{width:100%;display:flex;align-items:center;gap:6px}
+  .result-input{flex:1;max-width:none}
+  .result-label{font-size:9px}
+  .r-row{grid-template-columns:80px 1fr 60px;gap:3px;padding:8px 10px}
+  .r-row .r-note{display:none}
+  .r-label{font-size:10px}
+  .r-val{font-size:12px}
+  .r-formula{font-size:9px}
+  /* 工具栏 */
+  .toolbar{padding:10px;gap:8px}
+  .btn{padding:8px 16px;font-size:12px}
+  /* 历史记录 */
+  .rec-toolbar{flex-wrap:wrap;gap:4px;padding:10px}
+  .rec-toolbar input[type=text]{width:100%;max-width:200px}
+  .rec-date-input{width:110px}
+  .rec-count{display:block;width:100%;margin-top:6px}
+  .rec-table{font-size:9px}
+  .rec-table th,.rec-table td{padding:4px 6px}
+  /* 导出面板 */
+  .export-panel{padding:10px 12px}
+  .export-cols{grid-template-columns:repeat(2,1fr)}
+  /* 云同步面板 */
+  .sync-panel{padding:10px 12px}
+  .sync-row{flex-direction:column;align-items:stretch;gap:6px}
+  .sync-row label{min-width:auto}
+  .sync-row input{min-width:auto;width:100%}
+  /* 保存记录按钮 */
+  .btn-save{display:block;width:100%}
+}
+
+/* 打印样式 */
+@media print{
+  body{background:#fff;padding:0;min-width:auto}
+  .container{max-width:100%}
+  .header,.sec-head,.seg-del,.toolbar,.rec-toolbar,.seg-hint,.segments,.seg-actual .dim-wrap{display:none!important}
+  .card{box-shadow:none;border:1px solid #000;margin-bottom:4mm;page-break-inside:avoid}
+  .seg-body{padding:4px 8px}
+  .seg-row{margin-bottom:2px}
+  .result-wrap{margin-left:40px}
+  .result-input{width:150px}
+  input{border:1px solid #000!important;background:#fff!important;color:#000!important}
+  .r-val{color:#000}
+  .btn{display:none}
+}
+/* 密码保护遮罩 */
+.pwd-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.pwd-overlay .pwd-box{background:var(--card);padding:36px 32px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.15);text-align:center;max-width:400px;width:90%;}
+.pwd-overlay .pwd-icon{font-size:48px;margin-bottom:12px;}
+.pwd-overlay .pwd-title{font-size:20px;font-weight:700;margin-bottom:6px;color:var(--primary);}
+.pwd-overlay .pwd-subtitle{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.pwd-overlay .pwd-input{width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:8px;font-size:16px;text-align:center;outline:none;transition:border-color .2s;}
+.pwd-overlay .pwd-input:focus{border-color:var(--accent);}
+.pwd-overlay .pwd-btn{width:100%;padding:10px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;transition:background .2s;}
+.pwd-overlay .pwd-btn:hover{background:#1d4ed8;}
+.pwd-overlay .pwd-error{color:var(--red);font-size:12px;margin-top:8px;display:none;}
+.pwd-overlay .pwd-hint{font-size:11px;color:var(--muted);margin-top:14px;}
+</style>
+</head>
+<body>
+<div class="pwd-overlay" id="pwdOverlay">
+  <div class="pwd-box">
+    <div class="pwd-icon">🔐</div>
+    <div class="pwd-title" id="pwdTitle">请输入访问密码</div>
+    <div class="pwd-subtitle" id="pwdSubtitle"></div>
+    <input type="password" id="pwdInput" class="pwd-input" placeholder="请输入密码" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="pwd-btn" onclick="checkPwd()">确 认</button>
+    <div class="pwd-error" id="pwdError">密码错误，请重试</div>
+    <div class="pwd-hint" id="pwdHint"></div>
+  </div>
+</div>
+<div class="container">
+
+<!-- ====== 标题 ====== -->
+<div class="header">
+  <h1>🔨 袁红军的工作搭子</h1>
+  <span class="ver">v7.0</span>
+  <span class="ver" style="cursor:pointer;margin-left:8px" onclick="changePwd()" title="修改密码">🔑 修改</span>
+</div>
+
+<!-- ====== 顶部信息栏 ====== -->
+<div class="card">
+  <div class="info-grid info-row-1">
+    <div class="info-cell"><div class="info-label">客户名称</div><input class="info-input" id="top_cust" oninput="calcAll()"></div>
+    <div class="info-cell"><div class="info-label">锻件名称</div><input class="info-input" id="top_name" oninput="calcAll()"></div>
+    <div class="info-cell"><div class="info-label">材质</div><input class="info-input" id="top_mat" list="matList" value="4130" oninput="calcAll()"><datalist id="matList"><option value="410"><option value="4130"><option value="4140"><option value="4340"><option value="20CrMnTi"><option value="25CrNiMo"><option value="30CrMo"><option value="35CrMo"><option value="42CrMo"><option value="40CrNiMo"><option value="410/12Cr13"><option value="4130M"><option value="45#"></datalist></div>
+    <div class="info-cell"><div class="info-label">型号</div><input class="info-input" id="top_model" oninput="calcAll()"></div>
+    <div class="info-cell"><div class="info-label">图号</div><input class="info-input" id="top_dwg" oninput="calcAll()"></div>
+  </div>
+  <div class="info-grid info-row-2">
+    <div class="info-cell"><div class="info-label">单重 (KG)</div><input class="info-input highlight" id="top_unitWt" placeholder="自动/手填" oninput="_unitWtDirty=true;calcAll()"></div>
+    <div class="info-cell"><div class="info-label">数量</div><input type="number" class="info-input" id="top_qty" value="1" min="1" oninput="calcAll()"></div>
+    <div class="info-cell"><div class="info-label">单价 (元/KG)</div><input type="number" class="info-input highlight" id="top_price" step="0.01" value="10" oninput="calcAll()"></div>
+    <div class="info-cell"><div class="info-label">总重 (KG)</div><input class="info-input highlight" id="top_totalWt" readonly></div>
+    <div class="info-cell"><div class="info-label">总价 (元)</div><input class="info-input highlight" id="top_total" readonly></div>
+  </div>
+</div>
+
+<!-- ====== 精尺寸圆柱 ====== -->
+<div class="card">
+  <div class="sec-head"><span>🔵 精尺寸圆柱 <span style="font-size:10px;opacity:0.7;font-weight:400">（尺寸框支持算式：200-20→180）</span></span><button class="btn-add" onclick="addSeg('cyl');calcAll()">+ 添加圆柱段</button></div>
+  <div class="segments" id="cyl_segments"></div>
+</div>
+
+<!-- ====== 精尺寸方体 ====== -->
+<div class="card">
+  <div class="sec-head"><span>🟦 精尺寸方体</span><button class="btn-add" onclick="addSeg('rect');calcAll()">+ 添加方体段</button></div>
+  <div class="segments" id="rect_segments"></div>
+</div>
+
+<!-- ====== 精尺寸冲孔 ====== -->
+<div class="card">
+  <div class="sec-head"><span>⚫ 精尺寸冲孔（从总重中扣除）</span><button class="btn-add" onclick="addSeg('hole');calcAll()">+ 添加冲孔</button></div>
+  <div class="segments" id="hole_segments"></div>
+</div>
+
+<!-- ====== 工具栏 ====== -->
+<div class="toolbar">
+  <button class="btn btn-primary" onclick="calcAll()">📊 刷新计算</button>
+  <button class="btn btn-info" onclick="saveRecord()">💾 保存记录</button>
+  <button class="btn btn-warn" onclick="printRecord()">🖨️ 打印报价单</button>
+  <button class="btn btn-danger" onclick="resetAll()">🔄 重置全部</button>
+</div>
+
+<!-- ====== 结果汇总 ====== -->
+<div class="result-card">
+  <div class="result-head">📊 计算结果汇总（实时更新）</div>
+  <div class="result-body">
+    <div class="r-row"><div class="r-label">理论毛坯尺寸</div><div class="r-formula" id="r_theory_size_f">-</div><div class="r-val" id="r_theory_size">-</div><div class="r-note">圆柱 + 方体 - 冲孔</div></div>
+    <div class="r-row"><div class="r-label">理论总重（不含火耗）</div><div class="r-formula" id="r_theory_wt_f">-</div><div class="r-val" id="r_theory_wt">-</div><div class="r-note">体积 × 密度</div></div>
+    <div class="r-row"><div class="r-label">理论下料重量</div><div class="r-formula" id="r_cut_wt_f">-</div><div class="r-val" id="r_cut_wt">-</div><div class="r-note">理论总重 + 火耗</div></div>
+    <div class="r-row"><div class="r-label">实际毛坯尺寸</div><div class="r-formula" id="r_actual_size_f">-</div><div class="r-val" id="r_actual_size">-</div><div class="r-note">手填优先，否则用理论值</div></div>
+    <div class="r-row"><div class="r-label">实际总重（不含火耗）</div><div class="r-formula" id="r_actual_blank_wt_f">-</div><div class="r-val" id="r_actual_blank_wt">-</div><div class="r-note">实际体积 × 密度</div></div>
+    <div class="r-row"><div class="r-label">实际下料重量</div><div class="r-formula" id="r_actual_wt_f">-</div><div class="r-val" id="r_actual_wt">-</div><div class="r-note">实际体积×密度 + 火耗</div></div>
+    <div class="r-row"><div class="r-label">火耗</div><div class="r-input-wrap"><input type="number" id="fireLoss" value="3" step="0.1" oninput="calcAll()"> %</div><div class="r-val" id="r_fire_loss">-</div><div class="r-note">理论总重 × 火耗%</div></div>
+    <div class="r-row final"><div class="r-label">差额</div><div class="r-formula">实际下料 - 理论下料</div><div class="r-val diff-highlight" id="r_fangdun">-</div><div class="r-note"></div></div>
+  </div>
+</div>
+
+<!-- ====== 历史记录 ====== -->
+<div class="card" id="recordsCard">
+  <div class="result-head">📋 历史记录（自动保存到浏览器） <span id="syncStatus" style="font-size:11px;margin-left:8px;display:none">🟢 已同步</span></div>
+  <div class="rec-toolbar">
+    <input type="text" id="recSearch" placeholder="搜索客户/名称/型号..." oninput="renderRecords()">
+    <span style="font-size:11px;color:var(--muted)">筛选日期:</span>
+    <input type="date" id="recDateFrom" class="rec-date-input" oninput="renderRecords()" title="起始日期">
+    <span style="font-size:11px;color:var(--muted)">~</span>
+    <input type="date" id="recDateTo" class="rec-date-input" oninput="renderRecords()" title="结束日期">
+    <span class="rec-count" id="recCount">共 0 条</span>
+    <button class="btn-sm btn-sm-export" onclick="toggleExportPanel()">📊 导出Excel</button>
+    <button class="btn-sm btn-sm-del" onclick="clearAllRecords()">🗑 清空全部</button>
+    <button class="btn-sm btn-sm-export" onclick="exportAllRecords()">📤 导出全部</button>
+    <button class="btn-sm btn-sm-load" onclick="document.getElementById('importFile').click()">📥 导入记录</button>
+    <button class="btn-sm btn-sm-sync" onclick="toggleSyncPanel()" id="btnSync">☁️ 云同步</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importRecords(this)">
+  </div>
+  <!-- 云同步设置面板 -->
+  <div class="sync-panel" id="syncPanel" style="display:none">
+    <div class="sync-panel-title">
+      <span>☁️ 云同步设置</span>
+      <span class="sync-status" id="syncStatus"></span>
+    </div>
+    <div class="sync-row">
+      <label>Gist Raw URL</label>
+      <input type="text" id="syncRawUrl" placeholder="https://gist.githubusercontent.com/..." style="flex:1">
+    </div>
+    <div class="sync-row">
+      <label>GitHub Token <span style="font-weight:400;color:var(--muted)">（可选，填写后支持电脑端自动上传）</span></label>
+      <input type="password" id="syncToken" placeholder="ghp_xxxxxxxxxxxx" style="flex:1">
+    </div>
+    <div class="sync-hint">💡 只读模式：不填 Token 也能自动从云端拉取最新记录。填入 Token 后电脑端保存记录时会自动同步到云端。</div>
+    <div class="sync-actions">
+      <button class="btn-sm btn-sm-export" onclick="saveSyncSettings()">💾 保存设置</button>
+      <button class="btn-sm btn-sm-sync" onclick="syncFromCloud(true)">⬇️ 立即拉取</button>
+      <button class="btn-sm btn-sm-export" onclick="syncToCloud()" id="btnSyncUpload" style="display:none">⬆️ 推送到云端</button>
+      <button class="btn-sm btn-sm-del" onclick="toggleSyncPanel()">关闭</button>
+    </div>
+    <div class="sync-log" id="syncLog"></div>
+  </div>
+  <!-- 导出列选择面板 -->
+  <div class="export-panel" id="exportPanel" style="display:none">
+    <div class="export-panel-title">
+      <span>📋 选择要导出的列</span>
+      <span class="export-quick"><a href="javascript:void(0)" onclick="checkAllExportCols(true)">全选</a> / <a href="javascript:void(0)" onclick="checkAllExportCols(false)">全不选</a></span>
+    </div>
+    <div class="export-cols" id="exportCols"></div>
+    <div class="export-actions">
+      <button class="btn-sm btn-sm-load" onclick="doExport()">✅ 确认导出</button>
+      <button class="btn-sm btn-sm-del" onclick="toggleExportPanel()">取消</button>
+    </div>
+  </div>
+  <div class="rec-scroll" id="recScroll">
+    <div class="rec-empty" id="recEmpty">暂无记录，计算完成后点击「💾 保存记录」即可保存</div>
+    <table class="rec-table" id="recTable" style="display:none">
+      <thead><tr>
+        <th>日期</th><th>客户</th><th>名称</th><th>材质</th><th>型号</th><th>图号</th><th>尺寸概要</th><th>单重(KG)</th><th>实际下料(KG)</th><th>数量</th><th>单价</th><th>总价(元)</th><th>操作</th>
+      </tr></thead>
+      <tbody id="recTbody"></tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- 导入重复弹窗 -->
+<div class="dup-overlay" id="dupOverlay" style="display:none">
+  <div class="dup-modal">
+    <h3>📋 导入结果</h3>
+    <div class="dup-summary" id="dupSummary"></div>
+    <div id="dupList"></div>
+    <div class="dup-actions">
+      <button class="btn-sm btn-sm-export" onclick="document.getElementById('dupOverlay').style.display='none'">知道了</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 常量 =====
+const PI=Math.PI;
+const DENSITY={'410':7.75,'4130':7.85,'4140':7.85,'4340':7.85,'20CrMnTi':7.85,'25CrNiMo':7.85,'30CrMo':7.85,'35CrMo':7.85,'42CrMo':7.85,'40CrNiMo':7.85,'410/12Cr13':7.75,'4130M':7.85,'45#':7.85,'不锈钢':7.93,'铝合金':2.7,'铜合金':8.96,'铸铁':7.2,'工具钢':7.81};
+function getDensity(){var e=document.getElementById('top_mat');var m=e?e.value:'45#';return DENSITY[m]||7.85;}
+let cylN=0,rectN=0,holeN=0;
+let _finishedWt=0,_theoryBlankWt=0,_theoryCutWt=0,_actualBlankWt=0,_actualFinalWt=0,_unitWtDirty=false;  // 五种重量, 单重是否手动编辑
+const STORAGE_KEY='forging_records';
+
+// ===== 工具函数 =====
+function v(id){var e=document.getElementById(id);if(!e||e.value==='')return null;var raw=e.value.trim();return evalExpr(raw);}
+// 支持表达式输入：200-20 → 180, 200+10 → 210, 300*2 → 600
+function evalExpr(s){
+  // 去除空格和非运算符字符
+  if(!s||typeof s!=='string')return null;
+  var t=s.replace(/\s/g,'').replace(/[^0-9.+\-*\/()]/g,'');
+  if(!t)return null;
+  // 纯数字直接返回
+  if(/^[0-9.]+$/.test(t)){var n=parseFloat(t);return isNaN(n)?null:n;}
+  try{
+    // 安全地用 Function 执行简单四则运算
+    var r=new Function('return ('+t+')')();
+    return (typeof r==='number'&&!isNaN(r))?r:null;
+  }catch(e){
+    // 回退：尝试直接 parseFloat
+    var n2=parseFloat(s);
+    return isNaN(n2)?null:n2;
+  }
+}
+function val(id){var e=document.getElementById(id);return e?e.value:'';}
+function f(n,d){if(n===null||n===undefined||isNaN(n))return'-';return Number(n).toFixed(d||2);}
+function m2c(mm){return mm/10;}
+function cylVol(d,h){return PI*Math.pow(m2c(d)/2,2)*m2c(h);}
+function rectVol(l,w,h){return m2c(l)*m2c(w)*m2c(h);}
+function vol2wt(v){return v*getDensity()/1000;}
+function setVal(id,val){var e=document.getElementById(id);if(e)e.value=val;}
+function setText(id,text){var e=document.getElementById(id);if(e)e.textContent=text;}
+
+function nowDate(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function nowDateTime(){var d=new Date();return nowDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+
+function toast(msg,isErr){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isErr?' error':'')+' show';
+  setTimeout(function(){t.className='toast';},2000);
+}
+
+// ===== 添加段 =====
+function addSeg(type){
+  var n,h,container;
+  if(type==='cyl'){
+    cylN++;n=cylN;container='cyl_segments';
+    h='<div class="segment" data-type="cyl" data-id="'+n+'">'+
+      '<div class="seg-header"><span class="seg-num">'+n+'</span><span class="seg-title">圆柱段</span><button class="seg-del" onclick="delSeg(this);calcAll()">删除</button></div>'+
+      '<div class="seg-body">'+
+      '<div class="seg-row"><div class="seg-label">精尺寸</div>'+
+      '<select id="cyl_type_'+n+'" class="seg-type-select"><option value="4" selected>整体外圆</option><option value="1">大头外圆</option><option value="2">小头外圆</option><option value="3">中间外圆</option></select>'+
+      '<div class="dim-wrap">'+
+      '<div class="dim-item"><span class="dim-name">直径</span><input id="cyl_td_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="cyl_tda_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">高度</span><input id="cyl_th_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="cyl_tha_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div></div>'+
+      '<div class="result-wrap"><div class="result-box"><span class="result-label">理论毛坯</span><input id="cyl_tsize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">理论重</span><input id="cyl_twt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
+      '<div class="seg-row seg-actual"><div class="seg-label"><span>实际毛坯</span></div><div class="dim-wrap">'+
+      '<div class="dim-item"><span class="dim-name">直径</span><input id="cyl_ad_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">高度</span><input id="cyl_ah_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<span class="seg-hint">不填则用理论值</span></div>'+
+      '<div class="result-wrap"><div class="result-box"><span class="result-label">实际毛坯</span><input id="cyl_asize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">实际重</span><input id="cyl_awt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
+      '</div></div>';
+  }else if(type==='rect'){
+    rectN++;n=rectN;container='rect_segments';
+    h='<div class="segment" data-type="rect" data-id="'+n+'">'+
+      '<div class="seg-header"><span class="seg-num">'+n+'</span><span class="seg-title">方体段</span><button class="seg-del" onclick="delSeg(this);calcAll()">删除</button></div>'+
+      '<div class="seg-body">'+
+      '<div class="seg-row"><div class="seg-label">精尺寸</div>'+
+      '<select id="re_type_'+n+'" class="seg-type-select"><option value="4" selected>整体方</option><option value="1">大头方</option><option value="2">小头方</option><option value="3">中间方</option></select>'+
+      '<div class="dim-wrap">'+
+      '<div class="dim-item"><span class="dim-name">长度</span><input id="re_tl_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="re_tla_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">宽度</span><input id="re_tw_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="re_twa_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">高度</span><input id="re_th_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="re_tha_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div></div>'+
+      '<div class="result-wrap"><div class="result-box"><span class="result-label">理论毛坯</span><input id="re_tsize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">理论重</span><input id="re_twt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
+      '<div class="seg-row seg-actual"><div class="seg-label"><span>实际毛坯</span></div><div class="dim-wrap">'+
+      '<div class="dim-item"><span class="dim-name">长度</span><input id="re_al_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">宽度</span><input id="re_aw_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">高度</span><input id="re_ah_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<span class="seg-hint">不填则用理论值</span></div>'+
+      '<div class="result-wrap"><div class="result-box"><span class="result-label">实际毛坯</span><input id="re_asize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">实际重</span><input id="re_awt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
+      '</div></div>';
+  }else if(type==='hole'){
+    holeN++;n=holeN;container='hole_segments';
+    h='<div class="segment" data-type="hole" data-id="'+n+'">'+
+      '<div class="seg-header"><span class="seg-num">'+n+'</span><span class="seg-title">冲孔</span><button class="seg-del" onclick="delSeg(this);calcAll()">删除</button></div>'+
+      '<div class="seg-body">'+
+      '<div class="seg-row"><div class="seg-label">精尺寸</div><div class="dim-wrap">'+
+      '<div class="dim-item"><span class="dim-name">孔径</span><input id="ho_td_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="ho_tda_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">高度</span><input id="ho_th_'+n+'" class="dim-input" placeholder="自动取" title="不填则自动取圆柱/方体毛坯高度" oninput="calcAll()"> <input id="ho_tha_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div></div>'+
+      '<div class="result-wrap"><div class="result-box"><span class="result-label">理论毛坯</span><input id="ho_tsize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">理论重</span><input id="ho_twt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
+      '<div class="seg-row seg-actual"><div class="seg-label"><span>实际毛坯</span></div><div class="dim-wrap">'+
+      '<div class="dim-item"><span class="dim-name">孔径</span><input id="ho_ad_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<div class="dim-item"><span class="dim-name">高度</span><input id="ho_ah_'+n+'" class="dim-input" placeholder="自动取" title="不填则自动取圆柱/方体毛坯高度" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
+      '<span class="seg-hint">不填则用理论值</span></div>'+
+      '<div class="result-wrap"><div class="result-box"><span class="result-label">实际毛坯</span><input id="ho_asize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">实际重</span><input id="ho_awt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
+      '</div></div>';
+  }
+  document.getElementById(container).insertAdjacentHTML('beforeend',h);
+}
+
+function delSeg(btn){btn.closest('.segment').remove();}
+
+function collectSeg(seg){
+  var id=seg.dataset.id,t=seg.dataset.type,r={};
+  r.id=id;
+  if(t==='cyl'){
+    r.td=v('cyl_td_'+id);r.tda=v('cyl_tda_'+id)||0;
+    r.th=v('cyl_th_'+id);r.tha=v('cyl_tha_'+id)||0;
+    r.ad=v('cyl_ad_'+id);r.ah=v('cyl_ah_'+id);
+    r.segType=val('cyl_type_'+id)||'4';
+    // 三种尺寸字符串
+    r.finished='Φ'+(r.td||'-')+'×'+(r.th||'-');
+    r.theory=val('cyl_tsize_'+id)||'-';
+    r.actual=val('cyl_asize_'+id)||'-';
+  }else if(t==='rect'){
+    r.tl=v('re_tl_'+id);r.tla=v('re_tla_'+id)||0;
+    r.tw=v('re_tw_'+id);r.twa=v('re_twa_'+id)||0;
+    r.th=v('re_th_'+id);r.tha=v('re_tha_'+id)||0;
+    r.al=v('re_al_'+id);r.aw=v('re_aw_'+id);r.ah=v('re_ah_'+id);
+    r.segType=val('re_type_'+id)||'4';
+    r.finished=(r.tl||'-')+'×'+(r.tw||'-')+'×'+(r.th||'-');
+    r.theory=val('re_tsize_'+id)||'-';
+    r.actual=val('re_asize_'+id)||'-';
+  }else if(t==='hole'){
+    r.td=v('ho_td_'+id);r.tda=v('ho_tda_'+id)||0;
+    r.th=v('ho_th_'+id);r.tha=v('ho_tha_'+id)||0;
+    r.ad=v('ho_ad_'+id);r.ah=v('ho_ah_'+id);
+    r.segType='0';
+    r.finished='Φ'+(r.td||'-')+'×'+(r.th||'-');
+    r.theory=val('ho_tsize_'+id)||'-';
+    r.actual=val('ho_asize_'+id)||'-';
+  }
+  return r;
+}
+
+// ===== 计算 =====
+function calcAll(){
+  var cyls=[],rects=[],holes=[];
+  document.querySelectorAll('#cyl_segments .segment').forEach(function(seg){cyls.push(collectSeg(seg));});
+  document.querySelectorAll('#rect_segments .segment').forEach(function(seg){rects.push(collectSeg(seg));});
+  document.querySelectorAll('#hole_segments .segment').forEach(function(seg){holes.push(collectSeg(seg));});
+
+  var theoryVol=0,actualVol=0;
+  var theoryParts=[],actualParts=[];
+
+  cyls.forEach(function(c,i){
+    var ti=c.id;
+    if(c.td===null||c.th===null){setCyl(ti,'-','-','-','-');return;}
+    var tD=c.td+c.tda,tH=c.th+c.tha;
+    var tv=cylVol(tD,tH),twt=vol2wt(tv);
+    setVal('cyl_tsize_'+ti,'Φ'+f(tD,0)+'×'+f(tH,0));setVal('cyl_twt_'+ti,f(twt,1));
+    theoryVol+=tv;theoryParts.push('Φ'+f(tD,0)+'×'+f(tH,0));
+    var aD=(c.ad!==null)?c.ad:tD,aH=(c.ah!==null)?c.ah:tH;
+    var av=cylVol(aD,aH),awt=vol2wt(av);
+    setVal('cyl_asize_'+ti,'Φ'+f(aD,0)+'×'+f(aH,0));setVal('cyl_awt_'+ti,f(awt,1));
+    actualVol+=av;actualParts.push('Φ'+f(aD,0)+'×'+f(aH,0));
+  });
+
+  rects.forEach(function(r,i){
+    var ti=r.id;
+    if(r.tl===null||r.tw===null||r.th===null){setRect(ti,'-','-','-','-');return;}
+    var tL=r.tl+r.tla,tW=r.tw+r.twa,tH=r.th+r.tha;
+    var tv=rectVol(tL,tW,tH),twt=vol2wt(tv);
+    setVal('re_tsize_'+ti,f(tL,0)+'×'+f(tW,0)+'×'+f(tH,0));setVal('re_twt_'+ti,f(twt,1));
+    theoryVol+=tv;theoryParts.push(f(tL,0)+'×'+f(tW,0)+'×'+f(tH,0));
+    var aL=(r.al!==null)?r.al:tL,aW=(r.aw!==null)?r.aw:tW,aH=(r.ah!==null)?r.ah:tH;
+    var av=rectVol(aL,aW,aH),awt=vol2wt(av);
+    setVal('re_asize_'+ti,f(aL,0)+'×'+f(aW,0)+'×'+f(aH,0));setVal('re_awt_'+ti,f(awt,1));
+    actualVol+=av;actualParts.push(f(aL,0)+'×'+f(aW,0)+'×'+f(aH,0));
+  });
+
+  var baseH=0;
+  cyls.forEach(function(c){if(c.td!==null&&c.th!==null){var h=c.th+c.tha;if(h>baseH)baseH=h;}});
+  rects.forEach(function(r){if(r.tl!==null&&r.tw!==null&&r.th!==null){var h=r.th+r.tha;if(h>baseH)baseH=h;}});
+
+  holes.forEach(function(h,i){
+    var ti=h.id;
+    if(h.td===null){setHole(ti,'-','-','-','-');return;}
+    var useH=(h.th!==null)?h.th:baseH;
+    if(useH===0){setHole(ti,'-','-','-','-');return;}
+    var tD=Math.max(0,h.td-h.tda),tH=useH+h.tha;
+    var tv=cylVol(tD,tH),twt=vol2wt(tv);
+    setVal('ho_tsize_'+ti,'Φ'+f(tD,0)+'×'+f(tH,0));setVal('ho_twt_'+ti,'-'+f(twt,1));
+    theoryVol-=tv;theoryParts.push('-Φ'+f(tD,0)+'×'+f(tH,0));
+    var aD=(h.ad!==null)?h.ad:tD,aH=(h.ah!==null)?h.ah:tH;
+    var av=cylVol(aD,aH),awt=vol2wt(av);
+    setVal('ho_asize_'+ti,'Φ'+f(aD,0)+'×'+f(aH,0));setVal('ho_awt_'+ti,'-'+f(awt,1));
+    actualVol-=av;actualParts.push('-Φ'+f(aD,0)+'×'+f(aH,0));
+  });
+
+  var theoryWt=vol2wt(theoryVol);
+  var firePct=v('fireLoss')||3;
+  var fireWt=theoryWt*firePct/100;
+  var cutWt=theoryWt+fireWt;
+  var actualWt=vol2wt(actualVol);
+  var actualCutWt=actualWt+actualWt*firePct/100;
+  var diff=actualCutWt-cutWt;
+
+  var manualUnitWt=v('top_unitWt');
+  if(!_unitWtDirty||manualUnitWt===null||manualUnitWt===0){setVal('top_unitWt',f(actualCutWt,1));_unitWtDirty=false;}
+
+  var ts=cleanJoin(theoryParts)||'-';
+  setText('r_theory_size_f',ts);setText('r_theory_size',ts);
+  setText('r_theory_wt_f','体积 '+f(theoryVol,2)+'cm³ × '+getDensity()+' ÷ 1000');
+  setText('r_theory_wt',f(theoryWt,1)+' KG');
+  setText('r_fire_loss',f(fireWt,1)+' KG');
+  setText('r_cut_wt_f',f(theoryWt,1)+' + (火耗 '+firePct+'%)');
+  setText('r_cut_wt',f(cutWt,1)+' KG');
+
+  var as=cleanJoin(actualParts)||'-';
+  setText('r_actual_size_f',as);setText('r_actual_size',as);
+  // 实际总重（不含火耗）
+  setText('r_actual_blank_wt_f','体积 '+f(actualVol,2)+'cm³ × '+getDensity()+' ÷ 1000');
+  setText('r_actual_blank_wt',f(actualWt,1)+' KG');
+  setText('r_actual_wt_f','体积 '+f(actualVol,2)+'cm³ × '+getDensity()+' ÷ 1000 + (火耗 '+firePct+'%)');
+  setText('r_actual_wt',f(actualCutWt,1)+' KG');
+  setText('r_fangdun',(diff>=0?'+':'')+f(diff,1)+' KG');
+
+  var unitWt=v('top_unitWt')||actualCutWt;
+  var qty=v('top_qty')||1;
+  var price=v('top_price')||0;
+  setVal('top_totalWt',f(unitWt*qty,1));
+  setVal('top_total',f(unitWt*qty*price,2));
+
+  // 保存三种重量供记录使用
+  var fVol=0;
+  cyls.forEach(function(c){if(c.td!==null&&c.th!==null)fVol+=cylVol(c.td,c.th);});
+  rects.forEach(function(r){if(r.tl!==null&&r.tw!==null&&r.th!==null)fVol+=rectVol(r.tl,r.tw,r.th);});
+  holes.forEach(function(h){if(h.td!==null){var uh=(h.th!==null)?h.th:baseH;if(uh>0)fVol-=cylVol(h.td,uh);}});
+  _finishedWt=vol2wt(fVol);
+  _theoryBlankWt=theoryWt;
+  _theoryCutWt=cutWt;
+  _actualBlankWt=actualWt;
+  _actualFinalWt=actualCutWt;
+}
+
+function cleanJoin(parts){
+  if(!parts.length)return null;
+  var s=parts[0];
+  for(var i=1;i<parts.length;i++){var p=parts[i];if(p.charAt(0)==='-')s+=' '+p;else s+=' + '+p;}
+  return s;
+}
+
+function setCyl(i,v1,v2,v3,v4){setVal('cyl_tsize_'+i,v1);setVal('cyl_twt_'+i,v2);setVal('cyl_asize_'+i,v3);setVal('cyl_awt_'+i,v4);}
+function setRect(i,v1,v2,v3,v4){setVal('re_tsize_'+i,v1);setVal('re_twt_'+i,v2);setVal('re_asize_'+i,v3);setVal('re_awt_'+i,v4);}
+function setHole(i,v1,v2,v3,v4){setVal('ho_tsize_'+i,v1);setVal('ho_twt_'+i,v2);setVal('ho_asize_'+i,v3);setVal('ho_awt_'+i,v4);}
+
+function resetAll(){
+  if(!confirm('确定要重置所有数据吗？'))return;
+  ['cyl_segments','rect_segments','hole_segments'].forEach(function(id){document.getElementById(id).innerHTML='';});
+  cylN=0;rectN=0;holeN=0;
+  ['top_cust','top_name','top_model','top_dwg'].forEach(function(id){document.getElementById(id).value='';});
+  setVal('top_unitWt','');_unitWtDirty=false;setVal('top_qty','1');setVal('top_price','10');
+  setVal('fireLoss','3');
+  ['r_theory_size_f','r_theory_size','r_theory_wt_f','r_theory_wt','r_fire_loss','r_cut_wt_f','r_cut_wt','r_actual_size_f','r_actual_size','r_actual_blank_wt_f','r_actual_blank_wt','r_actual_wt_f','r_actual_wt','r_fangdun'].forEach(function(id){setText(id,'-');});
+  setVal('top_totalWt','');setVal('top_total','');
+  addSeg('cyl');
+  calcAll();
+}
+
+// ===== 数据持久化 =====
+let _syncMode='local';   // 'local' | 'server'
+let _recordsCache=[];  // server 模式下的缓存
+
+function getRecords(){
+  if(_syncMode==='server') return _recordsCache;
+  try{var raw=localStorage.getItem(STORAGE_KEY);return raw?JSON.parse(raw):[];}
+  catch(e){return [];}
+}
+function setRecords(arr){
+  if(_syncMode==='server'){
+    _recordsCache=arr;
+    fetch('/api/records',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(arr)}).catch(()=>{});
+    return;
+  }
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(arr));
+}
+
+// 服务器同步：轮询获取最新数据
+let _syncTimer=null, _syncLastLen=-1;
+function startSyncPoll(){
+  if(_syncTimer) return;
+  _syncTimer=setInterval(function(){
+    fetch('/api/records?_t='+Date.now()).then(r=>r.json()).then(data=>{
+      if(!Array.isArray(data)) return;
+      var changed=(data.length!==_syncLastLen)||JSON.stringify(data)!==JSON.stringify(_recordsCache);
+      _recordsCache=data;
+      _syncLastLen=data.length;
+      if(changed) renderRecords();
+      // 更新状态指示器
+      var el=document.getElementById('syncStatus');
+      if(el){el.textContent='🟢 已同步';el.style.color='#16a34a';}
+    }).catch(()=>{
+      var el=document.getElementById('syncStatus');
+      if(el){el.textContent='🔴 离线模式';el.style.color='#dc2626';}
+    });
+  },3000);
+}
+function stopSyncPoll(){clearInterval(_syncTimer);_syncTimer=null;}
+
+function getTypeName(type,segType){
+  if(type==='cyl'){
+    var map={'1':'大头外圆','2':'小头外圆','3':'中间外圆','4':'整体外圆'};
+    return map[segType]||'整体外圆';
+  }else if(type==='rect'){
+    var map={'1':'大头方','2':'小头方','3':'中间方','4':'整体方'};
+    return map[segType]||'整体方';
+  }else if(type==='hole'){
+    return '冲孔';
+  }
+  return '';
+}
+
+function buildSizeSummary(cyls,rects,holes){
+  // 把三种形状的所有段按顺序合并
+  function fmtSegs(type,segs,field){
+    var arr=[];
+    segs.forEach(function(s){
+      var tn=getTypeName(type,s.segType);
+      arr.push(tn+':'+s[field]);
+    });
+    return arr.join(' + ');
+  }
+  var finished=[],theory=[],actual=[];
+  cyls.forEach(function(c){finished.push(getTypeName('cyl',c.segType)+':'+c.finished);theory.push(getTypeName('cyl',c.segType)+':'+c.theory);actual.push(getTypeName('cyl',c.segType)+':'+c.actual);});
+  rects.forEach(function(r){finished.push(getTypeName('rect',r.segType)+':'+r.finished);theory.push(getTypeName('rect',r.segType)+':'+r.theory);actual.push(getTypeName('rect',r.segType)+':'+r.actual);});
+  holes.forEach(function(h){finished.push('冲孔:'+h.finished);theory.push('冲孔:'+h.theory);actual.push('冲孔:'+h.actual);});
+
+  return '精尺寸: '+(finished.join(' + ')||'-')+'\n理论毛坯: '+(theory.join(' + ')||'-')+'\n实际毛坯: '+(actual.join(' + ')||'-');
+}
+
+function saveRecord(){
+  if(!document.getElementById('r_actual_wt').textContent||document.getElementById('r_actual_wt').textContent==='-'){
+    toast('请先完成计算再保存！',true);return;
+  }
+  var rec={
+    id:Date.now(),date:nowDateTime(),
+    customer:val('top_cust'),product:val('top_name'),material:val('top_mat')||'45#',model:val('top_model'),drawing:val('top_dwg'),
+    unitWeight:f(v('top_unitWt')||_actualFinalWt,1),qty:v('top_qty')||1,unitPrice:v('top_price')||0,
+    totalWeight:f((v('top_unitWt')||_actualFinalWt)*(v('top_qty')||1),1),
+    totalPrice:f((v('top_unitWt')||_actualFinalWt)*(v('top_qty')||1)*(v('top_price')||0),2),
+    cycoryse:document.getElementById('r_theory_size').textContent,
+    theoryWeight:document.getElementById('r_theory_wt').textContent,
+    fireLossPct:v('fireLoss')||3,
+    fireLoss:document.getElementById('r_fire_loss').textContent,
+    cutWeight:document.getElementById('r_cut_wt').textContent,
+    actualSize:document.getElementById('r_actual_size').textContent,
+    actualWeight:document.getElementById('r_actual_wt').textContent,
+    diff:document.getElementById('r_fangdun').textContent,
+    finishedWeight:f(_finishedWt,1),      // 1精尺寸重量
+    theoryBlankWeight:f(_theoryBlankWt,1), // 2理论重量（不含火耗）
+    theoryCutWeight:f(_theoryCutWt,1),     // 3理论下料重量
+    actualBlankWeight:f(_actualBlankWt,1), // 4实际重量（不含火耗）
+    actualFinalWeight:f(_actualFinalWt,1), // 5实际下料重量
+    cyls:[],rects:[],holes:[]
+  };
+  document.querySelectorAll('#cyl_segments .segment').forEach(function(seg){rec.cyls.push(collectSeg(seg));});
+  document.querySelectorAll('#rect_segments .segment').forEach(function(seg){rec.rects.push(collectSeg(seg));});
+  document.querySelectorAll('#hole_segments .segment').forEach(function(seg){rec.holes.push(collectSeg(seg));});
+
+  // 构建新的尺寸概要
+  rec.sizeSummary=buildSizeSummary(rec.cyls,rec.rects,rec.holes);
+
+  var records=getRecords();
+  records.unshift(rec);
+  setRecords(records);
+  renderRecords();
+  toast('✅ 记录已保存！');
+  // Auto-sync to cloud if token configured
+  var _sc=loadSyncConfig();
+  if(_sc&&_sc.token){syncToCloud();}
+}
+
+// ===== 日期筛选工具 =====
+function getDateFilter(){
+  var from=val('recDateFrom'), to=val('recDateTo');
+  return function(r){
+    var d=(r.date||'').substring(0,10); // YYYY-MM-DD
+    if(from&&d<from) return false;
+    if(to&&d>to) return false;
+    return true;
+  };
+}
+
+function renderRecords(){
+  var search=(val('recSearch')||'').toLowerCase();
+  var dateFilter=getDateFilter();
+  var records=getRecords();
+  var filtered=records.filter(function(r){
+    if(!dateFilter(r)) return false;
+    if(!search) return true;
+    return (r.customer||'').toLowerCase().indexOf(search)>=0||(r.product||'').toLowerCase().indexOf(search)>=0||(r.model||'').toLowerCase().indexOf(search)>=0||(r.drawing||'').toLowerCase().indexOf(search)>=0;
+  });
+
+  var tbody=document.getElementById('recTbody');
+  var html='';
+  filtered.forEach(function(r){
+    var summaryLines=(r.sizeSummary||'').split('\n');
+    var summaryHtml=summaryLines.map(function(line){
+      return '<div style="font-size:10px;line-height:1.4">'+line+'</div>';
+    }).join('');
+    html+='<tr>'+
+      '<td class="rec-date">'+r.date.substring(0,16)+'</td>'+
+      '<td class="rec-cust">'+(r.customer||'-')+'</td>'+
+      '<td class="rec-name">'+(r.product||'-')+'</td>'+
+      '<td class="rec-mat">'+(r.material||'45#')+'</td>'+
+      '<td class="rec-model">'+(r.model||'-')+'</td>'+
+      '<td class="rec-dwg">'+(r.drawing||'-')+'</td>'+
+      '<td class="rec-summary">'+summaryHtml+'</td>'+
+      '<td class="rec-wt" style="font-size:10px"><div>精:'+(r.finishedWeight||'-')+'</div><div>论毛坯:'+(r.theoryBlankWeight||'-')+'</div><div>实毛坯:'+(r.actualBlankWeight||'-')+'</div></td>'+
+      '<td class="rec-wt">'+(r.actualFinalWeight||r.actualWeight||'-')+'</td>'+
+      '<td>'+r.qty+'</td><td>'+r.unitPrice+'</td><td class="rec-price">'+r.totalPrice+'</td>'+
+      '<td class=\"rec-actions\">'+
+      '<button class="btn-sm btn-sm-load" onclick="loadRecord('+r.id+')" title="加载此记录到计算器">加载</button> '+
+      '<button class="btn-sm btn-sm-print" onclick="printSavedRecord('+r.id+')" title="打印此报价单">打印</button> '+
+      '<button class="btn-sm btn-sm-del" onclick="deleteRecord('+r.id+')" title="删除此记录">删除</button>'+
+      '</td></tr>';
+  });
+
+  tbody.innerHTML=html;
+  document.getElementById('recTable').style.display=filtered.length?'':'none';
+  document.getElementById('recEmpty').style.display=filtered.length?'none':'';
+  document.getElementById('recCount').textContent='共 '+records.length+' 条'+(search||val('recDateFrom')||val('recDateTo')?' (筛选 '+filtered.length+' 条)':'');
+}
+
+function loadRecord(id){
+  var records=getRecords();
+  var r=records.find(function(rr){return rr.id===id;});
+  if(!r)return;
+  if(!confirm('加载此记录将覆盖当前所有数据，确定继续？'))return;
+
+  document.getElementById('top_cust').value=r.customer||'';
+  document.getElementById('top_name').value=r.product||'';
+  document.getElementById('top_mat').value=r.material||'45#';
+  document.getElementById('top_model').value=r.model||'';
+  document.getElementById('top_dwg').value=r.drawing||'';
+  setVal('top_qty',r.qty);setVal('top_price',r.unitPrice);
+  setVal('fireLoss',r.fireLossPct);
+
+  ['cyl_segments','rect_segments','hole_segments'].forEach(function(id){document.getElementById(id).innerHTML='';});
+  cylN=0;rectN=0;holeN=0;
+
+  r.cyls.forEach(function(c,i){
+    addSeg('cyl');
+    setVal('cyl_td_'+(i+1),c.td);setVal('cyl_tda_'+(i+1),c.tda||0);
+    setVal('cyl_th_'+(i+1),c.th);setVal('cyl_tha_'+(i+1),c.tha||0);
+    if(c.ad!==null)setVal('cyl_ad_'+(i+1),c.ad);
+    if(c.ah!==null)setVal('cyl_ah_'+(i+1),c.ah);
+    if(c.segType)setVal('cyl_type_'+(i+1),c.segType);
+  });
+  r.rects.forEach(function(rc,i){
+    addSeg('rect');
+    setVal('re_tl_'+(i+1),rc.tl);setVal('re_tla_'+(i+1),rc.tla||0);
+    setVal('re_tw_'+(i+1),rc.tw);setVal('re_twa_'+(i+1),rc.twa||0);
+    setVal('re_th_'+(i+1),rc.th);setVal('re_tha_'+(i+1),rc.tha||0);
+    if(rc.al!==null)setVal('re_al_'+(i+1),rc.al);
+    if(rc.aw!==null)setVal('re_aw_'+(i+1),rc.aw);
+    if(rc.ah!==null)setVal('re_ah_'+(i+1),rc.ah);
+    if(rc.segType)setVal('re_type_'+(i+1),rc.segType);
+  });
+  r.holes.forEach(function(h,i){
+    addSeg('hole');
+    setVal('ho_td_'+(i+1),h.td);setVal('ho_tda_'+(i+1),h.tda||0);
+    setVal('ho_th_'+(i+1),h.th);setVal('ho_tha_'+(i+1),h.tha||0);
+    if(h.ad!==null)setVal('ho_ad_'+(i+1),h.ad);
+    if(h.ah!==null)setVal('ho_ah_'+(i+1),h.ah);
+  });
+  setVal('top_unitWt','');_unitWtDirty=false;
+  calcAll();toast('✅ 记录已加载！');
+}
+
+function deleteRecord(id){
+  if(!confirm('确定删除这条记录？此操作不可恢复。'))return;
+  var records=getRecords();
+  records=records.filter(function(r){return r.id!==id;});
+  setRecords(records);
+  renderRecords();
+  toast('记录已删除');
+}
+
+function clearAllRecords(){
+  if(!confirm('确定清空所有历史记录？此操作不可恢复！'))return;
+  setRecords([]);
+  renderRecords();
+  toast('已清空全部记录');
+}
+
+// ===== 导入导出全部记录 =====
+function exportAllRecords(){
+  var records=getRecords();
+  if(!records.length){toast('没有可导出的记录！',true);return;}
+  var json=JSON.stringify(records,null,2);
+  var blob=new Blob([json],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='锻件报价记录_'+nowDate()+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✅ 已导出 '+records.length+' 条记录');
+}
+
+function importRecords(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var imported=JSON.parse(e.target.result);
+      if(!Array.isArray(imported)){toast('文件格式错误！',true);return;}
+      var existing=getRecords();
+      var newRecords=[];var dups=[];
+      imported.forEach(function(r){
+        if(!r.id) r.id=Date.now()+Math.random();
+        var dup=findDup(r,existing);
+        if(dup){dups.push({imported:r,existing:dup});}
+        else{newRecords.push(r);}
+      });
+      var merged=newRecords.concat(existing);
+      setRecords(merged);
+      renderRecords();
+      var msg='✅ 导入 '+newRecords.length+' 条新记录（共 '+merged.length+' 条）';
+      if(dups.length) msg+='，跳过 '+dups.length+' 条重复';
+      toast(msg);
+      if(dups.length) showDupResult(dups,newRecords.length,merged.length);
+    }catch(err){
+      toast('文件解析失败，请检查！',true);
+    }
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+function same(a,b){return String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase();}
+
+function findDup(rec,existing){
+  for(var i=0;i<existing.length;i++){
+    var r=existing[i];
+    if(same(rec.customer,r.customer)&&same(rec.product,r.product)&&same(rec.model,r.model)&&same(rec.drawing,r.drawing)){
+      var w1=parseFloat(rec.actualFinalWeight||rec.unitWeight||0);
+      var w2=parseFloat(r.actualFinalWeight||r.unitWeight||0);
+      if(w1>0&&w2>0&&Math.abs(w1-w2)/Math.max(Math.abs(w1),Math.abs(w2))<0.03) return r;
+      if(!w1&&!w2) return r;
+    }
+  }
+  return null;
+}
+
+function showDupResult(dups,newCount,total){
+  document.getElementById('dupOverlay').style.display='flex';
+  document.getElementById('dupSummary').innerHTML='新增 <b>'+newCount+'</b> 条，跳过 <b style="color:#f97316">'+dups.length+'</b> 条重复（共 '+total+' 条）';
+  var html='';
+  dups.forEach(function(d){
+    var name='<b>'+(d.imported.customer||'?')+'</b> — '+(d.imported.product||'无名称');
+    var impModel=d.imported.model||'';
+    var impWt=d.imported.actualFinalWeight||d.imported.unitWeight||'?';
+    var extWt=d.existing.actualFinalWeight||d.existing.unitWeight||'?';
+    html+='<div class="dup-item"><div class="dup-name">⏭ '+name+'</div>';
+    html+='<div class="dup-detail">型号：'+(impModel||'—')+' | 导入重量：'+impWt+' KG | 已有重量：'+extWt+' KG → <b style="color:#16a34a">保留已有</b></div></div>';
+  });
+  document.getElementById('dupList').innerHTML=html;
+}
+
+function printRecord(){window.print();}
+
+function printSavedRecord(id){
+  loadRecord(id);
+  setTimeout(function(){window.print();},500);
+}
+
+// ===== 导出列配置 =====
+var EXPORT_HEADERS=[
+  {key:'date',       label:'日期',           getter:function(r){return r.date||''}},
+  {key:'customer',   label:'客户名称',     getter:function(r){return r.customer||''}},
+  {key:'product',    label:'名称',         getter:function(r){return r.product||''}},
+  {key:'material',   label:'材质',         getter:function(r){return r.material||'45#'}},
+  {key:'model',      label:'型号',         getter:function(r){return r.model||''}},
+  {key:'drawing',   label:'图号',         getter:function(r){return r.drawing||''}},
+  {key:'sizeFin',    label:'精尺寸概要',   getter:function(r){return parseSummary(r,'精尺寸:')}},
+  {key:'sizeThe',    label:'理论毛坯概要', getter:function(r){return parseSummary(r,'理论毛坯:')}},
+  {key:'sizeAct',    label:'实际毛坯概要', getter:function(r){return parseSummary(r,'实际毛坯:')}},
+  {key:'finWt',      label:'精尺寸重量(KG)',getter:function(r){return r.finishedWeight||''}},
+  {key:'theoWt',     label:'理论毛坯重量(KG)',getter:function(r){return r.theoryBlankWeight||''}},
+  {key:'theoCutWt',  label:'理论下料重量(KG)',getter:function(r){return r.theoryCutWeight||''}},
+  {key:'actBlankWt', label:'实际毛坯重量(KG)',getter:function(r){return r.actualBlankWeight||''}},
+  {key:'actFinWt',   label:'实际下料重量(KG)',getter:function(r){return r.actualFinalWeight||r.actualWeight||''}},
+  {key:'firePct',    label:'火耗(%)',       getter:function(r){return r.fireLossPct||0}},
+  {key:'fireWt',     label:'火耗重量(KG)',   getter:function(r){var v=r.fireLoss;return v!=null?String(v).replace(/\s*KG\s*/g,'').trim():''}},
+  {key:'qty',        label:'数量',         getter:function(r){return r.qty||1}},
+  {key:'unitWt',     label:'单重(KG)',      getter:function(r){var a=r.actualFinalWeight;if(a!=null&&a!=='-'&&a!=='')return a;var v=r.unitWeight;return v!=null&&v!=='-'?v:''}},
+  {key:'unitPrice',  label:'单价(元/KG)',  getter:function(r){return r.unitPrice||0}},
+  {key:'totalWt',    label:'总重(KG)',      getter:function(r){var uw=r.actualFinalWeight;if(uw==null||uw==='-'||uw===''){uw=r.unitWeight;if(uw==null||uw==='-'||uw==='')return'';}var q=r.qty||1;return f(parseFloat(uw)*parseFloat(q),1)}},
+  {key:'totalPrice', label:'总价(元)',      getter:function(r){var uw=r.actualFinalWeight;if(uw==null||uw==='-'||uw===''){uw=r.unitWeight;if(uw==null||uw==='-'||uw==='')return'';}var q=r.qty||1;var p=r.unitPrice||0;return f(parseFloat(uw)*parseFloat(q)*parseFloat(p),2)}},
+];
+
+function parseSummary(r, prefix){
+  if(!r.sizeSummary) return '';
+  var lines=r.sizeSummary.split('\n');
+  for(var i=0;i<lines.length;i++){
+    if(lines[i].indexOf(prefix)===0) return lines[i].replace(prefix,'').trim();
+  }
+  return '';
+}
+
+var EXPORT_KEY='forging_export_cols';
+function loadExportCols(){
+  try{var j=JSON.parse(localStorage.getItem(EXPORT_KEY));if(Array.isArray(j)) return j;}catch(e){}
+  // 默认全选
+  return EXPORT_HEADERS.map(function(h){return h.key;});
+}
+function saveExportCols(keys){localStorage.setItem(EXPORT_KEY,JSON.stringify(keys));}
+
+function toggleExportPanel(){
+  var panel=document.getElementById('exportPanel');
+  if(panel.style.display==='none'){
+    renderExportCols();
+    panel.style.display='block';
+  } else {
+    panel.style.display='none';
+  }
+}
+
+function renderExportCols(){
+  var checked=loadExportCols();
+  var html='';
+  EXPORT_HEADERS.forEach(function(h){
+    var c=checked.indexOf(h.key)>=0?' checked':'';
+    html+='<label><input type="checkbox" value="'+h.key+'"'+c+'>'+h.label+'</label>';
+  });
+  document.getElementById('exportCols').innerHTML=html;
+}
+
+function getCheckedExportKeys(){
+  var boxes=document.querySelectorAll('#exportCols input[type=checkbox]');
+  var keys=[];
+  boxes.forEach(function(b){if(b.checked) keys.push(b.value);});
+  return keys;
+}
+
+function checkAllExportCols(on){
+  document.querySelectorAll('#exportCols input[type=checkbox]').forEach(function(b){b.checked=on;});
+}
+
+function doExport(){
+  var keys=getCheckedExportKeys();
+  if(!keys.length){toast('请至少选择一列！',true);return;}
+  saveExportCols(keys);
+  document.getElementById('exportPanel').style.display='none';
+
+  var records=getRecords();
+  var dateFilter=getDateFilter();
+  records=records.filter(dateFilter);
+  if(!records||!records.length){toast('所选日期范围内没有可导出的记录！',true);return;}
+
+  var headers=EXPORT_HEADERS.filter(function(h){return keys.indexOf(h.key)>=0;});
+  var BOM='\uFEFF';
+  var csvRows=[headers.map(function(h){return '"'+h.label.replace(/"/g,'""')+'"';}).join(',')];
+
+  records.forEach(function(r){
+    var row=headers.map(function(h){return h.getter(r);});
+    csvRows.push(row.map(function(v){
+      var s=String(v);
+      if(s.indexOf(',')>=0||s.indexOf('"')>=0||s.indexOf('\n')>=0)
+        return '"'+s.replace(/"/g,'""')+'"';
+      return s;
+    }).join(','));
+  });
+
+  var csvContent=BOM+csvRows.join('\n');
+  var blob=new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
+  var link=document.createElement('a');
+  link.href=URL.createObjectURL(blob);
+  var from=val('recDateFrom'), to=val('recDateTo');
+  var dateRange='';
+  if(from&&to) dateRange=from.replace(/-/g,'')+'_'+to.replace(/-/g,'');
+  else if(from) dateRange=from.replace(/-/g,'')+'_end';
+  else if(to) dateRange='start_'+to.replace(/-/g,'');
+  link.download=dateRange?'锻件报价记录_'+dateRange+'.csv':'锻件报价记录_'+nowDate()+'.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+  toast('已导出 '+records.length+' 条记录');
+}
+
+// 旧函数保留兼容
+function exportToExcel(){ toggleExportPanel(); }
+
+function printRecord(){window.print();}
+
+function printSavedRecord(id){
+  loadRecord(id);
+  setTimeout(function(){window.print();},500);
+}
+
+// ===== 云同步 =====
+var CLOUD_SYNC_KEY='forging_sync_config';
+var GIST_ID='e043c5a6fad1698b9c67508f3316ad16';
+var GIST_FILENAME='forging_sync_records.json';
+var DEFAULT_RAW_URL='https://gist.githubusercontent.com/mohudeyingzi/'+GIST_ID+'/raw/'+GIST_FILENAME;
+
+function loadSyncConfig(){
+  try{var raw=localStorage.getItem(CLOUD_SYNC_KEY);return raw?JSON.parse(raw):{rawUrl:DEFAULT_RAW_URL,token:'',lastSync:null};}
+  catch(e){return{rawUrl:DEFAULT_RAW_URL,token:'',lastSync:null};}
+}
+function saveSyncConfig(cfg){localStorage.setItem(CLOUD_SYNC_KEY,JSON.stringify(cfg));}
+
+function toggleSyncPanel(){
+  var p=document.getElementById('syncPanel');
+  if(p.style.display==='none'||!p.style.display){
+    p.style.display='block';
+    var cfg=loadSyncConfig();
+    document.getElementById('syncRawUrl').value=cfg.rawUrl||DEFAULT_RAW_URL;
+    document.getElementById('syncToken').value=cfg.token||'';
+    var btn=document.getElementById('btnSyncUpload');
+    btn.style.display=cfg.token?'inline-block':'none';
+    updateSyncStatus();
+  }else{
+    p.style.display='none';
+  }
+}
+
+function updateSyncStatus(){
+  var cfg=loadSyncConfig();
+  var el=document.getElementById('syncStatus');
+  var btn=document.getElementById('btnSync');
+  if(cfg.lastSync){
+    el.innerHTML='🟢 上次同步：'+formatTimeAgo(cfg.lastSync);
+    btn.textContent='☁️ 已同步';
+    btn.style.color='#16a34a';
+  }else{
+    el.textContent='⚪ 尚未同步';
+    btn.textContent='☁️ 云同步';
+    btn.style.color='#0369a1';
+  }
+  setTimeout(function(){btn.style.color='#0369a1';},3000);
+}
+
+function syncLog(msg){var el=document.getElementById('syncLog');el.innerHTML=msg+'<br>'+el.innerHTML;if(el.children.length>10)el.lastChild.remove();}
+
+function syncFromCloud(showToast){
+  var cfg=loadSyncConfig();
+  var url=cfg.rawUrl||DEFAULT_RAW_URL;
+  syncLog('⬇️ 正在从云端拉取...');
+  fetch(url+'?_t='+Date.now(),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){
+      if(!Array.isArray(data)){syncLog('⚠️ 云端数据格式错误');if(showToast)toast('云端数据格式错误！',true);return;}
+      var local=getRecords();var merged=[];var seen={};
+      // Cloud records first (higher priority)
+      data.forEach(function(r){if(r.id){seen[r.id]=true;merged.push(r);}});
+      // Local records that don't exist in cloud
+      local.forEach(function(r){if(!seen[r.id])merged.push(r);});
+      setRecords(merged);renderRecords();
+      cfg.lastSync=Date.now();saveSyncConfig(cfg);updateSyncStatus();
+      syncLog('✅ 拉取成功，共 '+data.length+' 条云端记录（已与本地合并）');
+      if(showToast)toast('✅ 已从云端同步 '+data.length+' 条记录');
+    })
+    .catch(function(e){
+      syncLog('❌ 拉取失败：'+e.message);
+      if(showToast)toast('云同步失败，请检查网络和URL！',true);
+    });
+}
+
+function syncToCloud(){
+  var cfg=loadSyncConfig();
+  if(!cfg.token){syncLog('⚠️ 未配置 GitHub Token，无法上传');toast('请先填写 GitHub Token！',true);return;}
+  var records=getRecords();
+  syncLog('⬆️ 正在推送到云端 ('+records.length+' 条)...');
+  fetch('https://api.github.com/gists/'+GIST_ID,{
+    method:'PATCH',
+    headers:{'Authorization':'token '+cfg.token,'Content-Type':'application/json'},
+    body:JSON.stringify({files:(function(){var f={};f[GIST_FILENAME]={content:JSON.stringify(records,null,2)};return f;})()})
+  })
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(){
+      cfg.lastSync=Date.now();saveSyncConfig(cfg);updateSyncStatus();
+      syncLog('✅ 推送成功！'+records.length+' 条记录已同步到云端');
+      toast('✅ 已推送到云端！');
+    })
+    .catch(function(e){
+      syncLog('❌ 推送失败：'+e.message);
+      toast('推送失败：'+e.message,true);
+    });
+}
+
+function saveSyncSettings(){
+  var cfg=loadSyncConfig();
+  cfg.rawUrl=(document.getElementById('syncRawUrl').value||'').trim();
+  cfg.token=(document.getElementById('syncToken').value||'').trim();
+  saveSyncConfig(cfg);
+  var btn=document.getElementById('btnSyncUpload');
+  btn.style.display=cfg.token?'inline-block':'none';
+  syncLog('✅ 设置已保存'+(cfg.token?'（已启用自动上传）':''));
+  toast('✅ 设置已保存！');
+  updateSyncStatus();
+}
+
+function formatTimeAgo(ts){
+  var diff=Date.now()-ts;
+  if(diff<60000) return '刚刚';
+  if(diff<3600000) return Math.floor(diff/60000)+'分钟前';
+  if(diff<86400000) return Math.floor(diff/3600000)+'小时前';
+  return Math.floor(diff/86400000)+'天前';
+}
+
+function autoSyncFromCloud(){
+  var cfg=loadSyncConfig();
+  if(!cfg.rawUrl) return;
+  // Only auto-sync if has URL; silent fetch
+  var url=cfg.rawUrl||DEFAULT_RAW_URL;
+  fetch(url+'?_t='+Date.now(),{cache:'no-store'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(data){
+      if(!Array.isArray(data)||!data.length) return;
+      var local=getRecords();var merged=[];var seen={};
+      data.forEach(function(r){if(r.id){seen[r.id]=true;merged.push(r);}});
+      var newCnt=0;
+      local.forEach(function(r){if(!seen[r.id]){merged.push(r);newCnt++;}});
+      if(merged.length!==local.length||data.length!==local.length){
+        setRecords(merged);renderRecords();
+      }
+      cfg.lastSync=Date.now();saveSyncConfig(cfg);updateSyncStatus();
+    })
+    .catch(function(){/* silent fail */});
+}
+
+// 启动：检测运行模式
+if(typeof window!=='undefined'&&window.__SERVER_MODE){_syncMode='server';fetch('/api/records').then(r=>r.json()).then(data=>{if(Array.isArray(data)){_recordsCache=data;_syncLastLen=data.length;}renderRecords();startSyncPoll();}).catch(()=>{_syncMode='local';renderRecords();});}else{renderRecords();autoSyncFromCloud();}
+// ===== 密码保护 =====
+var PWD_HASH='-793529128'; // 默认密码 Yhj37448111，修改此值可换默认密码
+function hashPwd(s){var h=0;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h=((h<<5)-h)+c;h|=0;}return String(h);}
+
+function checkPwd(){
+  var input=document.getElementById('pwdInput').value.trim();
+  if(!input){return;}
+  var stored=null;
+  try{stored=localStorage.getItem('forging_calc_pwd');}catch(e){}
+  var target=stored||PWD_HASH;
+  if(hashPwd(input)===target){
+    document.getElementById('pwdOverlay').style.display='none';
+    if(!stored){try{localStorage.setItem('forging_calc_pwd',PWD_HASH);}catch(e){}}
+    addSeg('cyl');calcAll();
+    return;
+  }
+  showPwdError('密码错误，请重试');
+  document.getElementById('pwdInput').value='';
+  document.getElementById('pwdInput').focus();
+}
+
+function showPwdError(msg){var el=document.getElementById('pwdError');el.textContent=msg;el.style.display='block';}
+
+function changePwd(){
+  var old=prompt('请输入当前密码：');
+  if(!old)return;
+  var stored=null;
+  try{stored=localStorage.getItem('forging_calc_pwd');}catch(e){}
+  var target=stored||PWD_HASH;
+  if(hashPwd(old)!==target){alert('密码错误！');return;}
+  var n1=prompt('请输入新密码（留空恢复默认123456）：');
+  if(!n1||n1===''){
+    try{localStorage.removeItem('forging_calc_pwd');}catch(e){}
+    alert('已恢复默认密码 123456');return;
+  }
+  if(n1.length<4){alert('新密码至少4位！');return;}
+  var n2=prompt('请再次输入新密码：');
+  if(n1!==n2){alert('两次密码不一致！');return;}
+  try{localStorage.setItem('forging_calc_pwd',hashPwd(n1));}catch(e){}
+  alert('密码修改成功！注意：自定义密码仅在本浏览器有效，换设备仍需默认密码');
+}
+
+window.onload=function(){
+  var stored=null;
+  try{stored=localStorage.getItem('forging_calc_pwd');}catch(e){}
+  document.getElementById('pwdTitle').textContent='请输入访问密码';
+  document.getElementById('pwdInput').focus();
+};
+</script>
+</body>
+</html>
