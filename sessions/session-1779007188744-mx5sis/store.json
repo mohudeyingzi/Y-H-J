@@ -1,9 +1,9 @@
 {
   "id": "session-1779007188744-mx5sis",
-  "name": "```json",
+  "name": "云同步重构",
   "status": "active",
   "createdAt": "2026-05-17T08:47:38.654Z",
-  "updatedAt": "2026-05-30T07:37:41.759Z",
+  "updatedAt": "2026-05-31T09:23:27.386Z",
   "agents": [
     {
       "id": "agent_v1y6lh9h",
@@ -17,9 +17,9 @@
   ],
   "summary": {
     "id": "summary_m3fm2j86",
-    "title": "```json",
+    "title": "云同步重构",
     "createdAt": "2026-05-17T08:47:38.654Z",
     "file": "summary_m3fm2j86.md"
   },
-  "lastMessageCount": 475
+  "lastMessageCount": 499
 }

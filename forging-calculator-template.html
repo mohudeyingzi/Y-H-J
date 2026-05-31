@@ -164,6 +164,15 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 .sync-hint{font-size:11px;color:#64748b;margin-bottom:10px;line-height:1.5;background:#fff;padding:8px 12px;border-radius:5px;border:1px dashed #93c5fd}
 .sync-actions{display:flex;gap:8px;flex-wrap:wrap}
 .sync-log{margin-top:10px;font-size:11px;color:#64748b;line-height:1.6;max-height:80px;overflow-y:auto}
+.gist-list{margin-top:10px;background:#fff;border:1.5px solid #93c5fd;border-radius:6px;padding:10px;max-height:200px;overflow-y:auto}
+.gist-list-title{font-size:12px;font-weight:600;color:#0369a1;margin-bottom:8px}
+.gist-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;margin:4px 0;border:1px solid #e2e8f0;border-radius:5px;cursor:pointer;transition:background .15s;font-size:12px}
+.gist-item:hover{background:#f0f9ff;border-color:#7dd3fc}
+.gist-item.selected{border-color:#2563eb;background:#eff6ff}
+.gist-item .gi-info{flex:1;min-width:0}
+.gist-item .gi-name{font-weight:600;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gist-item .gi-meta{color:#94a3b8;font-size:10px;margin-top:2px}
+.gist-item .gi-btn{flex-shrink:0;margin-left:8px;font-size:11px}
 
 /* 导出确认弹窗 */
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#16a34a;color:#fff;padding:12px 24px;border-radius:6px;font-
@@ -384,7 +393,8 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
       <span class="sync-status" id="syncStatus"></span>
     </div>
     <div class="sync-hint" style="margin-bottom:10px">
-      💡 步骤：① 填写你的 GitHub Token → ② 点击 <b>初始化云同步</b> → ③ 自动同步！
+      💡 步骤：① 填写你的 GitHub Token → ② 点击 <b>初始化云同步</b> → ③ 自动同步！<br>
+      <span style="color:var(--muted);font-size:11px">换设备/清缓存后？填 Token 后点「🔍 找回 Gist」一键恢复！</span>
     </div>
     <div class="sync-row">
       <label>GitHub Token <span style="font-weight:400;color:var(--muted)">（需要 gist 权限）</span></label>
@@ -396,7 +406,12 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
       <button class="btn-sm btn-sm-sync" onclick="initSyncGist()" id="btnInitSync" style="display:none">🚀 初始化云同步</button>
       <button class="btn-sm btn-sm-sync" onclick="syncFromCloud(true)">⬇️ 拉取</button>
       <button class="btn-sm btn-sm-export" onclick="syncToCloud()" id="btnSyncUpload" style="display:none">⬆️ 推送</button>
+      <button class="btn-sm btn-sm-sync" onclick="findUserGists()" id="btnRecoverGist" style="display:none">🔍 找回 Gist</button>
       <button class="btn-sm btn-sm-del" onclick="toggleSyncPanel()">关闭</button>
+    </div>
+    <div class="gist-list" id="gistList" style="display:none">
+      <div class="gist-list-title">📋 请选择要恢复的同步记录：</div>
+      <div id="gistListItems"></div>
     </div>
     <div class="sync-log" id="syncLog"></div>
   </div>
@@ -1154,10 +1169,12 @@ function toggleSyncPanel(){
     var cfg=loadSyncConfig();
 
     document.getElementById('syncToken').value=cfg.token||'';
-    var btn=document.getElementById('btnSyncUpload');
-    var initBtn=document.getElementById('btnInitSync');
-    btn.style.display=cfg.gistId?'inline-block':'none';
-    initBtn.style.display=cfg.gistId?'none':'inline-block';
+    var hasGist=!!cfg.gistId;
+    var hasToken=!!cfg.token;
+    document.getElementById('btnSyncUpload').style.display=hasGist?'inline-block':'none';
+    document.getElementById('btnInitSync').style.display=hasGist?'none':'inline-block';
+    document.getElementById('btnRecoverGist').style.display=(hasToken&&!hasGist)?'inline-block':'none';
+    document.getElementById('gistList').style.display='none';
     updateSyncStatus();
   }else{
     p.style.display='none';
@@ -1278,14 +1295,106 @@ function saveSyncSettings(){
   cfg.token=(document.getElementById('syncToken').value||'').trim();
   if(cfg.token){
     if(!cfg.gistId){
-      syncLog('💡 检测到新 Token，请点击"初始化云同步"创建云端存储');
+      syncLog('💡 Token 已保存！请点击"初始化云同步"新建，或"找回 Gist"恢复已有数据');
       document.getElementById('btnInitSync').style.display='inline-block';
+      document.getElementById('btnRecoverGist').style.display='inline-block';
     }
   }
   saveSyncConfig(cfg);
   syncLog('✅ Token 已保存');
   toast('✅ 设置已保存！');
 }
+
+var _foundGists=[]; // 找回 Gist 时的暂存列表
+
+// 找回 Gist：从 GitHub 列出用户所有包含锻件数据的 Gist
+function findUserGists(){
+  var cfg=loadSyncConfig();
+  var token=cfg.token||(document.getElementById('syncToken').value||'').trim();
+  if(!token){
+    syncLog('⚠️ 请先填写 GitHub Token！');
+    toast('请先填写 GitHub Token！',true);
+    return;
+  }
+  if(cfg.gistId){
+    syncLog('💡 你已经有 Gist ID: '+cfg.gistId.substring(0,8)+'...，无需找回');
+    toast('你已经有同步记录了！',true);
+    return;
+  }
+  var listDiv=document.getElementById('gistList');
+  var itemsDiv=document.getElementById('gistListItems');
+  itemsDiv.innerHTML='<div style="padding:12px;text-align:center;color:var(--muted);font-size:12px">🔍 正在查找你的云端数据...</div>';
+  listDiv.style.display='block';
+
+  fetch('https://api.github.com/gists?per_page=100',{
+    headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}
+  })
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(gists){
+      var matching=[];
+      gists.forEach(function(g){
+        var desc=(g.description||'').toLowerCase();
+        var hasFile=false;
+        if(g.files) for(var k in g.files){if(k.indexOf('forging')>=0||k.indexOf('锻件')>=0){hasFile=true;break;}}
+        if(hasFile||desc.indexOf('锻件')>=0||desc.indexOf('forging')>=0){
+          matching.push(g);
+        }
+      });
+      if(matching.length===0){
+        itemsDiv.innerHTML='<div style="padding:12px;text-align:center;color:var(--muted);font-size:12px">❌ 未找到锻件相关的云端数据<br><small>请确认：① Token 正确 ② 之前用过云同步功能</small></div>';
+        return;
+      }
+      _foundGists=matching;
+      renderGistList(matching);
+    })
+    .catch(function(e){
+      itemsDiv.innerHTML='<div style="padding:12px;text-align:center;color:#dc2626;font-size:12px">❌ 查找失败：'+e.message+'<br><small>请检查 Token 是否正确、网络是否通畅</small></div>';
+    });
+}
+
+function renderGistList(gists){
+  var itemsDiv=document.getElementById('gistListItems');
+  var html='';
+  gists.forEach(function(g,idx){
+    var desc=g.description||'无描述';
+    var created=g.created_at?new Date(g.created_at).toLocaleDateString('zh-CN'):'未知';
+    var fileCount=0;if(g.files)for(var k in g.files)fileCount++;
+    html+='<div class="gist-item" style="cursor:pointer" onclick="recoverGistByIndex('+idx+')">';
+    html+='<div class="gi-info"><div class="gi-name">📦 '+escapeHtml(desc)+'</div>';
+    html+='<div class="gi-meta">创建：'+created+' · '+fileCount+' 个文件 · ID: '+g.id.substring(0,8)+'...</div></div>';
+    html+='<button class="btn-sm btn-sm-sync gi-btn" onclick="event.stopPropagation();recoverGistByIndex('+idx+')">✅ 恢复</button>';
+    html+='</div>';
+  });
+  itemsDiv.innerHTML=html;
+}
+
+function recoverGistByIndex(idx){
+  var g=_foundGists[idx];
+  if(!g){toast('数据异常，请重新查找',true);return;}
+  var gistId=g.id;
+  var rawUrl='';
+  for(var k in g.files){
+    if(k.indexOf('forging')>=0||k.indexOf('锻件')>=0){rawUrl=g.files[k].raw_url;break;}
+  }
+  if(!rawUrl){for(var k in g.files){rawUrl=g.files[k].raw_url;break;}}
+  recoverGist(gistId,rawUrl);
+}
+
+function recoverGist(gistId, rawUrl){
+  var cfg=loadSyncConfig();
+  cfg.gistId=gistId;
+  cfg.rawUrl=rawUrl;
+  saveSyncConfig(cfg);
+  syncLog('✅ 已恢复同步记录！Gist: '+gistId.substring(0,8)+'...');
+  toast('✅ 同步记录已恢复！现在可以拉取/推送数据了');
+  document.getElementById('gistList').style.display='none';
+  document.getElementById('btnSyncUpload').style.display='inline-block';
+  document.getElementById('btnInitSync').style.display='none';
+  document.getElementById('btnRecoverGist').style.display='none';
+  updateSyncStatus();
+}
+
+function escapeHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function formatTimeAgo(ts){
   var diff=Date.now()-ts;
