@@ -403,10 +403,10 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
     <div class="sync-hint">🔑 Token 获取：登录 GitHub → Settings → Developer settings → Personal access tokens → Generate new token (classic) → 勾选 <code>gist</code> 权限 → 生成并复制</div>
     <div class="sync-actions">
       <button class="btn-sm btn-sm-export" onclick="saveSyncSettings()">💾 保存 Token</button>
-      <button class="btn-sm btn-sm-sync" onclick="initSyncGist()" id="btnInitSync" style="display:none">🚀 初始化云同步</button>
+      <button class="btn-sm btn-sm-sync" onclick="initSyncGist()" id="btnInitSync">🚀 初始化云同步</button>
       <button class="btn-sm btn-sm-sync" onclick="syncFromCloud(true)">⬇️ 拉取</button>
       <button class="btn-sm btn-sm-export" onclick="syncToCloud()" id="btnSyncUpload" style="display:none">⬆️ 推送</button>
-      <button class="btn-sm btn-sm-sync" onclick="findUserGists()" id="btnRecoverGist" style="display:none">🔍 找回 Gist</button>
+      <button class="btn-sm btn-sm-sync" onclick="findUserGists()" id="btnRecoverGist">🔍 找回 Gist</button>
       <button class="btn-sm btn-sm-del" onclick="toggleSyncPanel()">关闭</button>
     </div>
     <div class="gist-list" id="gistList" style="display:none">
@@ -1172,8 +1172,8 @@ function toggleSyncPanel(){
     var hasGist=!!cfg.gistId;
     var hasToken=!!cfg.token;
     document.getElementById('btnSyncUpload').style.display=hasGist?'inline-block':'none';
-    document.getElementById('btnInitSync').style.display=hasGist?'none':'inline-block';
-    document.getElementById('btnRecoverGist').style.display=(hasToken&&!hasGist)?'inline-block':'none';
+    document.getElementById('btnInitSync').style.display='inline-block';
+    document.getElementById('btnRecoverGist').style.display='inline-block';
     document.getElementById('gistList').style.display='none';
     updateSyncStatus();
   }else{
@@ -1296,8 +1296,7 @@ function saveSyncSettings(){
   if(cfg.token){
     if(!cfg.gistId){
       syncLog('💡 Token 已保存！请点击"初始化云同步"新建，或"找回 Gist"恢复已有数据');
-      document.getElementById('btnInitSync').style.display='inline-block';
-      document.getElementById('btnRecoverGist').style.display='inline-block';
+
     }
   }
   saveSyncConfig(cfg);
