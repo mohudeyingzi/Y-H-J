@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>袁红军的工作搭子</title>
+<meta name="robots" content="noindex, nofollow">
+<title>计算工具</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--primary:#1a3a5c;--accent:#2563eb;--red:#dc2626;--green:#16a34a;--orange:#d97706;--bg:#f1f5f9;--card:#fff;--border:#cbd5e1;--muted:#64748b}
@@ -305,7 +306,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 
 <!-- ====== 标题 ====== -->
 <div class="header">
-  <h1>🔨 袁红军的工作搭子</h1>
+  <h1>计算工具</h1>
   <span class="ver">v7.0</span>
   <span class="ver" style="cursor:pointer;margin-left:8px" onclick="changePwd()" title="修改密码">🔑 修改</span>
 </div>
@@ -314,7 +315,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 <div class="card">
   <div class="info-grid info-row-1">
     <div class="info-cell"><div class="info-label">客户名称</div><input class="info-input" id="top_cust" oninput="calcAll()"></div>
-    <div class="info-cell"><div class="info-label">锻件名称</div><input class="info-input" id="top_name" oninput="calcAll()"></div>
+    <div class="info-cell"><div class="info-label">零件名称</div><input class="info-input" id="top_name" oninput="calcAll()"></div>
     <div class="info-cell"><div class="info-label">材质</div><input class="info-input" id="top_mat" list="matList" value="4130" oninput="calcAll()"><datalist id="matList"><option value="410"><option value="4130"><option value="4140"><option value="4340"><option value="20CrMnTi"><option value="25CrNiMo"><option value="30CrMo"><option value="35CrMo"><option value="42CrMo"><option value="40CrNiMo"><option value="410/12Cr13"><option value="4130M"><option value="45#"></datalist></div>
     <div class="info-cell"><div class="info-label">型号</div><input class="info-input" id="top_model" oninput="calcAll()"></div>
     <div class="info-cell"><div class="info-label">图号</div><input class="info-input" id="top_dwg" oninput="calcAll()"></div>
@@ -328,21 +329,21 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
   </div>
 </div>
 
-<!-- ====== 精尺寸圆柱 ====== -->
+<!-- ====== 圆柱 ====== -->
 <div class="card">
-  <div class="sec-head"><span>🔵 精尺寸圆柱 <span style="font-size:10px;opacity:0.7;font-weight:400">（尺寸框支持算式：200-20→180）</span></span><button class="btn-add" onclick="addSeg('cyl');calcAll()">+ 添加圆柱段</button></div>
+  <div class="sec-head"><span>🔵 圆柱 <span style="font-size:10px;opacity:0.7;font-weight:400">（尺寸框支持算式：200-20→180）</span></span><button class="btn-add" onclick="addSeg('cyl');calcAll()">+ 添加圆柱段</button></div>
   <div class="segments" id="cyl_segments"></div>
 </div>
 
-<!-- ====== 精尺寸方体 ====== -->
+<!-- ====== 方体 ====== -->
 <div class="card">
-  <div class="sec-head"><span>🟦 精尺寸方体</span><button class="btn-add" onclick="addSeg('rect');calcAll()">+ 添加方体段</button></div>
+  <div class="sec-head"><span>🟦 方体</span><button class="btn-add" onclick="addSeg('rect');calcAll()">+ 添加方体段</button></div>
   <div class="segments" id="rect_segments"></div>
 </div>
 
-<!-- ====== 精尺寸冲孔 ====== -->
+<!-- ====== 冲孔 ====== -->
 <div class="card">
-  <div class="sec-head"><span>⚫ 精尺寸冲孔（从总重中扣除）</span><button class="btn-add" onclick="addSeg('hole');calcAll()">+ 添加冲孔</button></div>
+  <div class="sec-head"><span>⚫ 冲孔（从总重中扣除）</span><button class="btn-add" onclick="addSeg('hole');calcAll()">+ 添加冲孔</button></div>
   <div class="segments" id="hole_segments"></div>
 </div>
 
@@ -350,7 +351,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 <div class="toolbar">
   <button class="btn btn-primary" onclick="calcAll()">📊 刷新计算</button>
   <button class="btn btn-info" onclick="saveRecord()">💾 保存记录</button>
-  <button class="btn btn-warn" onclick="printRecord()">🖨️ 打印报价单</button>
+  <button class="btn btn-warn" onclick="printRecord()">🖨️ 打印清单</button>
   <button class="btn btn-danger" onclick="resetAll()">🔄 重置全部</button>
 </div>
 
@@ -510,7 +511,7 @@ function addSeg(type){
     h='<div class="segment" data-type="cyl" data-id="'+n+'">'+
       '<div class="seg-header"><span class="seg-num">'+n+'</span><span class="seg-title">圆柱段</span><button class="seg-del" onclick="delSeg(this);calcAll()">删除</button></div>'+
       '<div class="seg-body">'+
-      '<div class="seg-row"><div class="seg-label">精尺寸</div>'+
+      '<div class="seg-row"><div class="seg-label">标称</div>'+
       '<select id="cyl_type_'+n+'" class="seg-type-select"><option value="4" selected>整体外圆</option><option value="1">大头外圆</option><option value="2">小头外圆</option><option value="3">中间外圆</option></select>'+
       '<div class="dim-wrap">'+
       '<div class="dim-item"><span class="dim-name">直径</span><input id="cyl_td_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="cyl_tda_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
@@ -527,7 +528,7 @@ function addSeg(type){
     h='<div class="segment" data-type="rect" data-id="'+n+'">'+
       '<div class="seg-header"><span class="seg-num">'+n+'</span><span class="seg-title">方体段</span><button class="seg-del" onclick="delSeg(this);calcAll()">删除</button></div>'+
       '<div class="seg-body">'+
-      '<div class="seg-row"><div class="seg-label">精尺寸</div>'+
+      '<div class="seg-row"><div class="seg-label">标称</div>'+
       '<select id="re_type_'+n+'" class="seg-type-select"><option value="4" selected>整体方</option><option value="1">大头方</option><option value="2">小头方</option><option value="3">中间方</option></select>'+
       '<div class="dim-wrap">'+
       '<div class="dim-item"><span class="dim-name">长度</span><input id="re_tl_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="re_tla_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
@@ -546,7 +547,7 @@ function addSeg(type){
     h='<div class="segment" data-type="hole" data-id="'+n+'">'+
       '<div class="seg-header"><span class="seg-num">'+n+'</span><span class="seg-title">冲孔</span><button class="seg-del" onclick="delSeg(this);calcAll()">删除</button></div>'+
       '<div class="seg-body">'+
-      '<div class="seg-row"><div class="seg-label">精尺寸</div><div class="dim-wrap">'+
+      '<div class="seg-row"><div class="seg-label">标称</div><div class="dim-wrap">'+
       '<div class="dim-item"><span class="dim-name">孔径</span><input id="ho_td_'+n+'" class="dim-input" placeholder="mm" oninput="calcAll()"> <input id="ho_tda_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div>'+
       '<div class="dim-item"><span class="dim-name">高度</span><input id="ho_th_'+n+'" class="dim-input" placeholder="自动取" title="不填则自动取圆柱/方体毛坯高度" oninput="calcAll()"> <input id="ho_tha_'+n+'" class="dim-allow" placeholder="余量" oninput="calcAll()"> <span class="dim-unit">mm</span></div></div>'+
       '<div class="result-wrap"><div class="result-box"><span class="result-label">理论毛坯</span><input id="ho_tsize_'+n+'" class="result-input" readonly></div><div class="result-box"><span class="result-label">理论重</span><input id="ho_twt_'+n+'" class="result-input" style="width:80px" readonly></div></div></div>'+
@@ -789,7 +790,7 @@ function buildSizeSummary(cyls,rects,holes){
   rects.forEach(function(r){finished.push(getTypeName('rect',r.segType)+':'+r.finished);theory.push(getTypeName('rect',r.segType)+':'+r.theory);actual.push(getTypeName('rect',r.segType)+':'+r.actual);});
   holes.forEach(function(h){finished.push('冲孔:'+h.finished);theory.push('冲孔:'+h.theory);actual.push('冲孔:'+h.actual);});
 
-  return '精尺寸: '+(finished.join(' + ')||'-')+'\n理论毛坯: '+(theory.join(' + ')||'-')+'\n实际毛坯: '+(actual.join(' + ')||'-');
+  return '标称: '+(finished.join(' + ')||'-')+'\n理论毛坯: '+(theory.join(' + ')||'-')+'\n实际毛坯: '+(actual.join(' + ')||'-');
 }
 
 function saveRecord(){
@@ -810,7 +811,7 @@ function saveRecord(){
     actualSize:document.getElementById('r_actual_size').textContent,
     actualWeight:document.getElementById('r_actual_wt').textContent,
     diff:document.getElementById('r_fangdun').textContent,
-    finishedWeight:f(_finishedWt,1),      // 1精尺寸重量
+    finishedWeight:f(_finishedWt,1),      // 标称重量
     theoryBlankWeight:f(_theoryBlankWt,1), // 2理论重量（不含火耗）
     theoryCutWeight:f(_theoryCutWt,1),     // 3理论下料重量
     actualBlankWeight:f(_actualBlankWt,1), // 4实际重量（不含火耗）
@@ -875,7 +876,7 @@ function renderRecords(){
       '<td>'+r.qty+'</td><td>'+r.unitPrice+'</td><td class="rec-price">'+r.totalPrice+'</td>'+
       '<td class=\"rec-actions\">'+
       '<button class="btn-sm btn-sm-load" onclick="loadRecord('+r.id+')" title="加载此记录到计算器">加载</button> '+
-      '<button class="btn-sm btn-sm-print" onclick="printSavedRecord('+r.id+')" title="打印此报价单">打印</button> '+
+      '<button class="btn-sm btn-sm-print" onclick="printSavedRecord('+r.id+')" title="打印此清单">打印</button> '+
       '<button class="btn-sm btn-sm-del" onclick="deleteRecord('+r.id+')" title="删除此记录">删除</button>'+
       '</td></tr>';
   });
@@ -956,7 +957,7 @@ function exportAllRecords(){
   var blob=new Blob([json],{type:'application/json'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download='锻件报价记录_'+nowDate()+'.json';
+  a.href=url;a.download='计算记录_'+nowDate()+'.json';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   URL.revokeObjectURL(url);
   toast('✅ 已导出 '+records.length+' 条记录');
@@ -1037,10 +1038,10 @@ var EXPORT_HEADERS=[
   {key:'material',   label:'材质',         getter:function(r){return r.material||'45#'}},
   {key:'model',      label:'型号',         getter:function(r){return r.model||''}},
   {key:'drawing',   label:'图号',         getter:function(r){return r.drawing||''}},
-  {key:'sizeFin',    label:'精尺寸概要',   getter:function(r){return parseSummary(r,'精尺寸:')}},
+  {key:'sizeFin',    label:'标称尺寸概要',   getter:function(r){return parseSummary(r,'标称:')}},
   {key:'sizeThe',    label:'理论毛坯概要', getter:function(r){return parseSummary(r,'理论毛坯:')}},
   {key:'sizeAct',    label:'实际毛坯概要', getter:function(r){return parseSummary(r,'实际毛坯:')}},
-  {key:'finWt',      label:'精尺寸重量(KG)',getter:function(r){return r.finishedWeight||''}},
+  {key:'finWt',      label:'标称重量(KG)',getter:function(r){return r.finishedWeight||''}},
   {key:'theoWt',     label:'理论毛坯重量(KG)',getter:function(r){return r.theoryBlankWeight||''}},
   {key:'theoCutWt',  label:'理论下料重量(KG)',getter:function(r){return r.theoryCutWeight||''}},
   {key:'actBlankWt', label:'实际毛坯重量(KG)',getter:function(r){return r.actualBlankWeight||''}},
@@ -1136,7 +1137,7 @@ function doExport(){
   if(from&&to) dateRange=from.replace(/-/g,'')+'_'+to.replace(/-/g,'');
   else if(from) dateRange=from.replace(/-/g,'')+'_end';
   else if(to) dateRange='start_'+to.replace(/-/g,'');
-  link.download=dateRange?'锻件报价记录_'+dateRange+'.csv':'锻件报价记录_'+nowDate()+'.csv';
+  link.download=dateRange?'计算记录_'+dateRange+'.csv':'计算记录_'+nowDate()+'.csv';
   link.click();
   URL.revokeObjectURL(link.href);
   toast('已导出 '+records.length+' 条记录');
@@ -1195,7 +1196,7 @@ function initSyncGist(){
     method:'POST',
     headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
     body:JSON.stringify({
-      description:'锻件计算器数据备份',
+      description:'计算数据备份',
       public:false,
       files:(function(){var f={};f[GIST_FILENAME]={content:'[]'};return f;})()})
   })
@@ -1306,7 +1307,7 @@ function saveSyncSettings(){
 
 var _foundGists=[]; // 找回 Gist 时的暂存列表
 
-// 找回 Gist：从 GitHub 列出用户所有包含锻件数据的 Gist
+// 找回 Gist：从 GitHub 列出用户所有相关数据的 Gist
 function findUserGists(){
   var cfg=loadSyncConfig();
   var token=cfg.token||(document.getElementById('syncToken').value||'').trim();
@@ -1334,13 +1335,13 @@ function findUserGists(){
       gists.forEach(function(g){
         var desc=(g.description||'').toLowerCase();
         var hasFile=false;
-        if(g.files) for(var k in g.files){if(k.indexOf('forging')>=0||k.indexOf('锻件')>=0){hasFile=true;break;}}
-        if(hasFile||desc.indexOf('锻件')>=0||desc.indexOf('forging')>=0){
+        if(g.files) for(var k in g.files){if(k.indexOf('forging')>=0||k.indexOf('数据')>=0){hasFile=true;break;}}
+        if(hasFile||desc.indexOf('数据')>=0||desc.indexOf('forging')>=0){
           matching.push(g);
         }
       });
       if(matching.length===0){
-        itemsDiv.innerHTML='<div style="padding:12px;text-align:center;color:var(--muted);font-size:12px">❌ 未找到锻件相关的云端数据<br><small>请确认：① Token 正确 ② 之前用过云同步功能</small></div>';
+        itemsDiv.innerHTML='<div style="padding:12px;text-align:center;color:var(--muted);font-size:12px">❌ 未找到相关的云端数据<br><small>请确认：① Token 正确 ② 之前用过云同步功能</small></div>';
         return;
       }
       _foundGists=matching;
@@ -1373,7 +1374,7 @@ function recoverGistByIndex(idx){
   var gistId=g.id;
   var rawUrl='';
   for(var k in g.files){
-    if(k.indexOf('forging')>=0||k.indexOf('锻件')>=0){rawUrl=g.files[k].raw_url;break;}
+    if(k.indexOf('forging')>=0||k.indexOf('数据')>=0){rawUrl=g.files[k].raw_url;break;}
   }
   if(!rawUrl){for(var k in g.files){rawUrl=g.files[k].raw_url;break;}}
   recoverGist(gistId,rawUrl);
@@ -1426,7 +1427,7 @@ function autoSyncFromCloud(){
 // 启动：检测运行模式
 if(typeof window!=='undefined'&&window.__SERVER_MODE){_syncMode='server';fetch('/api/records').then(r=>r.json()).then(data=>{if(Array.isArray(data)){_recordsCache=data;_syncLastLen=data.length;}renderRecords();startSyncPoll();}).catch(()=>{_syncMode='local';renderRecords();});}else{renderRecords();autoSyncFromCloud();}
 // ===== 密码保护 =====
-var PWD_HASH='-793529128'; // 默认密码 Yhj37448111，修改此值可换默认密码
+var PWD_HASH='692043642';
 function hashPwd(s){var h=0;for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);h=((h<<5)-h)+c;h|=0;}return String(h);}
 
 function checkPwd(){
