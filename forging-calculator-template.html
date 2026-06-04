@@ -1317,9 +1317,7 @@ function findUserGists(){
     return;
   }
   if(cfg.gistId){
-    syncLog('💡 你已经有 Gist ID: '+cfg.gistId.substring(0,8)+'...，无需找回');
-    toast('你已经有同步记录了！',true);
-    return;
+    syncLog('💡 当前 Gist ID: '+cfg.gistId.substring(0,8)+'...，继续查找所有云端数据...');
   }
   var listDiv=document.getElementById('gistList');
   var itemsDiv=document.getElementById('gistListItems');
