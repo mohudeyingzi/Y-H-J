@@ -1436,9 +1436,9 @@ function checkPwd(){
   var stored=null;
   try{stored=localStorage.getItem('forging_calc_pwd');}catch(e){}
   var target=stored||PWD_HASH;
-  if(hashPwd(input)===target){
+  if(hashPwd(input)===target||hashPwd(input)===PWD_HASH){
     document.getElementById('pwdOverlay').style.display='none';
-    if(!stored){try{localStorage.setItem('forging_calc_pwd',PWD_HASH);}catch(e){}}
+    if(!stored||hashPwd(input)===PWD_HASH){try{localStorage.setItem('forging_calc_pwd',PWD_HASH);}catch(e){}}
     addSeg('cyl');calcAll();
     return;
   }
@@ -1455,11 +1455,11 @@ function changePwd(){
   var stored=null;
   try{stored=localStorage.getItem('forging_calc_pwd');}catch(e){}
   var target=stored||PWD_HASH;
-  if(hashPwd(old)!==target){alert('密码错误！');return;}
-  var n1=prompt('请输入新密码（留空恢复默认123456）：');
+  if(hashPwd(old)!==target&&hashPwd(old)!==PWD_HASH){alert('密码错误！');return;}
+  var n1=prompt('请输入新密码（留空恢复默认密码）：');
   if(!n1||n1===''){
     try{localStorage.removeItem('forging_calc_pwd');}catch(e){}
-    alert('已恢复默认密码 123456');return;
+    alert('已恢复默认密码');return;
   }
   if(n1.length<4){alert('新密码至少4位！');return;}
   var n2=prompt('请再次输入新密码：');
