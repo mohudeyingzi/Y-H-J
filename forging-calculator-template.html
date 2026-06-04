@@ -288,6 +288,58 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 .pwd-overlay .pwd-btn:hover{background:#1d4ed8;}
 .pwd-overlay .pwd-error{color:var(--red);font-size:12px;margin-top:8px;display:none;}
 .pwd-overlay .pwd-hint{font-size:11px;color:var(--muted);margin-top:14px;}
+
+/* ====== 暗色模式 ====== */
+body.dark{--bg:#0f172a;--card:#1e293b;--border:#334155;--muted:#94a3b8}
+body.dark .card{border-color:#334155}
+body.dark .header{background:linear-gradient(135deg,#0f172a,#1e293b)}
+body.dark .sec-head{background:linear-gradient(135deg,#0f172a,#1e293b)}
+body.dark .info-input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+body.dark .info-input:focus{border-color:#3b82f6}
+body.dark .info-input[readonly]{background:#1a2332;color:#f87171}
+body.dark .info-input.highlight{color:#f87171}
+body.dark .info-select{background:#1e293b;border-color:#334155;color:#e2e8f0}
+body.dark .segments{background:#1a2332}
+body.dark .segment{border-color:#334155;background:#1e293b}
+body.dark .seg-header{background:#1a2332;border-color:#334155}
+body.dark .seg-title{color:#e2e8f0}
+body.dark .dim-input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+body.dark .dim-allow{background:#312e1a}
+body.dark .dim-allow:focus{border-color:#f59e0b}
+body.dark .seg-type-select{background:#1e293b;border-color:#334155;color:#e2e8f0}
+body.dark .result-input{background:#312e1a;border-color:#78350f;color:#f87171}
+body.dark .r-label{color:#e2e8f0}
+body.dark .rec-toolbar input,body.dark .rec-date-input{background:#1e293b;border-color:#334155;color:#e2e8f0}
+body.dark .rec-table th{background:#1a2332;color:#94a3b8;border-color:#334155}
+body.dark .rec-table td{border-color:#1e293b}
+body.dark .rec-table tr:hover td{background:#1e293b}
+body.dark .export-panel,.sync-panel{background:#1a2332;border-color:#334155}
+body.dark .export-cols label{color:#cbd5e1}
+body.dark .sync-hint{background:#1e293b;border-color:#334155}
+body.dark .gist-list{background:#1e293b;border-color:#334155}
+body.dark .gist-item{border-color:#334155}
+body.dark .gist-item:hover{background:#1a2332;border-color:#3b82f6}
+body.dark .gist-item.selected{background:#1e3a5f;border-color:#3b82f6}
+body.dark .gist-item .gi-name{color:#e2e8f0}
+body.dark .dup-modal{background:#1e293b;color:#e2e8f0}
+body.dark .dup-modal .dup-item{background:#1a2332}
+body.dark .result-card,.card{background:var(--card)}
+body.dark .r-row:hover{background:#1a2332}
+body.dark .r-row.final{background:#312e1a}
+body.dark .r-row.final:hover{background:#3d3a1a}
+body.dark .seg-actual{background:#1a1e2a}
+body.dark .seg-actual .dim-input{background:#1e293b}
+body.dark .result-body{background:transparent}
+body.dark .batch-bar{background:#fbbf24;color:#0f172a}
+
+/* ====== 批量操作栏 ====== */
+.batch-bar{display:flex;align-items:center;gap:12px;padding:8px 18px;background:#fef9c3;border-bottom:1px solid #fde68a;font-size:12px;font-weight:600}
+.batch-bar button{padding:4px 12px;border:none;border-radius:4px;font-size:11px;cursor:pointer}
+.batch-bar .batch-del{background:#fee2e2;color:var(--red)}
+.batch-bar .batch-del:hover{background:#fecaca}
+.batch-bar .batch-exp{background:#dbeafe;color:var(--accent)}
+.batch-bar .batch-exp:hover{background:#bfdbfe}
+
 </style>
 </head>
 <body>
@@ -309,6 +361,8 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
   <h1>计算工具</h1>
   <span class="ver">v7.0</span>
   <span class="ver" style="cursor:pointer;margin-left:8px" onclick="changePwd()" title="修改密码">🔑 修改</span>
+  <span class="ver" style="cursor:pointer;margin-left:8px" onclick="toggleDarkMode()" id="darkToggle" title="切换暗色模式">🌙</span>
+  <span class="ver" style="cursor:pointer;margin-left:8px" onclick="selectAllRecords(true);document.getElementById('batchBar').style.display='flex';updateBatchUI()" title="批量操作">☡️ 批量</span>
 </div>
 
 <!-- ====== 顶部信息栏 ====== -->
@@ -373,6 +427,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 <!-- ====== 历史记录 ====== -->
 <div class="card" id="recordsCard">
   <div class="result-head">📋 历史记录（自动保存到浏览器） <span id="syncStatus" style="font-size:11px;margin-left:8px;display:none">🟢 已同步</span></div>
+  <div class="batch-bar" id="batchBar" style="display:none">已选 <span id="batchCount">0</span> 条 | <button class="batch-del" onclick="batchDelete()">⚖️ 批量删除</button> | <button class="batch-exp" onclick="batchExport()">📊 批量导出</button> | <button class="btn-sm" onclick="selectAllRecords(false);document.getElementById('batchBar').style.display='none';updateBatchUI()" style="background:#e2e8f0;color:#64748b">取消选择</button></div>
   <div class="rec-toolbar">
     <input type="text" id="recSearch" placeholder="搜索客户/名称/型号..." oninput="renderRecords()">
     <span style="font-size:11px;color:var(--muted)">筛选日期:</span>
@@ -432,7 +487,7 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
     <div class="rec-empty" id="recEmpty">暂无记录，计算完成后点击「💾 保存记录」即可保存</div>
     <table class="rec-table" id="recTable" style="display:none">
       <thead><tr>
-        <th>日期</th><th>客户</th><th>名称</th><th>材质</th><th>型号</th><th>图号</th><th>尺寸概要</th><th>单重(KG)</th><th>实际下料(KG)</th><th>数量</th><th>单价</th><th>总价(元)</th><th>操作</th>
+        <th style="width:30px"><input type="checkbox" onclick="event.stopPropagation();toggleSelectAll(this)" title="全选/取消"></th><th>日期</th><th>客户</th><th>名称</th><th>材质</th><th>型号</th><th>图号</th><th>尺寸概要</th><th>单重(KG)</th><th>实际下料(KG)</th><th>数量</th><th>单价</th><th>总价(元)</th><th>操作</th>
       </tr></thead>
       <tbody id="recTbody"></tbody>
     </table>
@@ -1472,6 +1527,80 @@ window.onload=function(){
   document.getElementById('pwdTitle').textContent='请输入访问密码';
   document.getElementById('pwdInput').focus();
 };
+
+
+// ====== 暗色模式 ======
+(function(){
+  var saved=localStorage.getItem("forging_dark_mode");
+  if(saved==="true"||(saved===null&&window.matchMedia("(prefers-color-scheme:dark)").matches)){
+    document.body.classList.add("dark");
+    var tg=document.getElementById("darkToggle");if(tg)tg.textContent="\u2600\ufe0f";
+  }
+  window.matchMedia("(prefers-color-scheme:dark)").addEventListener("change",function(e){
+    if(localStorage.getItem("forging_dark_mode")===null){
+      document.body.classList.toggle("dark",e.matches);
+      var tg=document.getElementById("darkToggle");if(tg)tg.textContent=e.matches?"\u2600\ufe0f":"\u{1f319}";
+    }
+  });
+})();
+function toggleDarkMode(){
+  var isDark=document.body.classList.toggle("dark");
+  localStorage.setItem("forging_dark_mode",isDark?"true":"false");
+  var tg=document.getElementById("darkToggle");if(tg)tg.textContent=isDark?"\u2600\ufe0f":"\u{1f319}";
+}
+
+// ====== 快捷复制 ======
+function cloneRecord(id){
+  var records=getRecords();
+  var r=records.find(function(rr){return rr.id===id;});
+  if(!r)return;
+  var clone=JSON.parse(JSON.stringify(r));
+  clone.id=Date.now();
+  clone.date=new Date().toISOString().replace("T"," ").substring(0,16);
+  clone.customer=(clone.customer||"")+"(\u526f\u672c)";
+  records.unshift(clone);
+  setRecords(records);
+  renderRecords();
+  toast("\u2705 \u5df2\u590d\u5236\uff01");
+}
+
+// ====== 批量操作 ======
+function toggleSelectAll(cb){
+  document.querySelectorAll(".rec-cb").forEach(function(c){c.checked=cb.checked;});
+  updateBatchUI();
+}
+function selectAllRecords(on){
+  document.querySelectorAll(".rec-cb").forEach(function(c){c.checked=on;});
+  updateBatchUI();
+}
+function getSelectedIds(){
+  var ids=[];
+  document.querySelectorAll(".rec-cb:checked").forEach(function(c){ids.push(parseInt(c.value));});
+  return ids;
+}
+function updateBatchUI(){
+  var ids=getSelectedIds();
+  document.getElementById("batchCount").textContent=ids.length;
+  document.getElementById("batchBar").style.display=ids.length?"flex":"none";
+}
+function batchDelete(){
+  var ids=getSelectedIds();
+  if(!ids.length){toast("\u8bf7\u5148\u52fe\u9009\u8981\u5220\u9664\u7684\u8bb0\u5f55\uff01",true);return;}
+  if(!confirm("\u786e\u5b9a\u5220\u9664\u9009\u4e2d\u7684 "+ids.length+" \u6761\u8bb0\u5f55\uff1f\u6b64\u64cd\u4f5c\u4e0d\u53ef\u6062\u590d\uff01"))return;
+  var records=getRecords().filter(function(r){return ids.indexOf(r.id)<0;});
+  setRecords(records);
+  renderRecords();
+  document.getElementById("batchBar").style.display="none";
+  toast("\u5df2\u5220\u9664 "+ids.length+" \u6761\u8bb0\u5f55");
+}
+function batchExport(){
+  var ids=getSelectedIds();
+  if(!ids.length){toast("\u8bf7\u5148\u52fe\u9009\u8981\u5bfc\u51fa\u7684\u8bb0\u5f55\uff01",true);return;}
+  var records=getRecords().filter(function(r){return ids.indexOf(r.id)>=0;});
+  _exportTarget=records;
+  toggleExportPanel();
+}
+
 </script>
 </body>
 </html>
