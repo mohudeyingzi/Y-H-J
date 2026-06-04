@@ -1,0 +1,378 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-02T00:42:53.074Z",
+  "entries": {
+    "memory:memory/2026-05-31.md:1:39": {
+      "key": "memory:memory/2026-05-31.md:1:39",
+      "path": "memory/2026-05-31.md",
+      "startLine": 1,
+      "endLine": 39,
+      "source": "memory",
+      "snippet": "# 2026-05-31 Memory Log --- ## 2026-05-31 16:41 - 云同步 Token 丢失恢复方案讨论 ### 用户提问 如果忘记了云同步 Token 怎么办？ ### 解决方案 **情况 1：Token 丢了，但浏览器 localStorage 还存着 Gist ID** - 去 GitHub 重新生成 Token（只需 gist 权限） - 粘贴新 Token 到云同步面板 → 保存 - 自动连接到原来的 Gist 数据 **情况 2：浏览器数据全清（Token + Gist ID 都没了）** - 登录 https://gist.github.com - 找到名为 \"锻件计算器数据备份\" 的私有 Gist - 浏览器地址栏提取 Gist ID：`https://gist.github.com/mohudeyingzi/{gist_id}` - 回到计算器云同步面板，输入 Gist ID 恢复连接 ### 待开发功能 用户需要\"找回已创建的同步\"按钮： - 自动调用 GitHub API 列出用户所有 Gist - 显示 Gist 名称、创建时间 - 一键选择恢复，无需手动查找 Gist ID - 技术实现：调用 `GET /gists` API，过滤出包含 `forging_sync_records.json` 文件的 Gist ### 关键代码位置 - 文件：`workspace/forging-calculator-template.html` - 相关函数：`initCloudSync()`, `getLocalGis",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.38890874683856963,
+      "maxScore": 0.38890874683856963,
+      "firstRecalledAt": "2026-05-31T09:55:56.221Z",
+      "lastRecalledAt": "2026-05-31T09:55:56.221Z",
+      "queryHashes": [
+        "9b9532dbadf4"
+      ],
+      "recallDays": [
+        "2026-05-31"
+      ],
+      "conceptTags": [
+        "备份",
+        "gist.github.com",
+        "gist.github.com/mohudeyingzi",
+        "gist-id",
+        "forging-sync-records.json",
+        "log",
+        "同步",
+        "token"
+      ]
+    },
+    "memory:memory/2026-05-26.md:1:34": {
+      "key": "memory:memory/2026-05-26.md:1:34",
+      "path": "memory/2026-05-26.md",
+      "startLine": 1,
+      "endLine": 34,
+      "source": "memory",
+      "snippet": "### 18m. 锻件报价计算器：GitHub Gist 云同步功能完成 **背景**：用户创建了 Gist 用于跨设备记录同步，要求实现自动云同步。 **Gist 信息**： - URL: https://gist.github.com/mohudeyingzi/e043c5a6fad1698b9c67508f3316ad16 - Raw URL: https://gist.githubusercontent.com/mohudeyingzi/e043c5a6fad1698b9c67508f3316ad16/raw/forging_sync_records.json - CORS: `Access-Control-Allow-Origin: *` ✅ **已实现的功能**： 1. **自动拉取（页面打开时）** - 页面加载后自动 fetch Gist Raw URL 获取云端记录 - 与本地记录合并（云端优先，本地去重） - 无需任何配置，打开页面即可自动同步 2. **手动云同步面板**（工具栏「☁️ 云同步」按钮） - Raw URL 输入框（预填你的 Gist 链接） - Token 输入框（选填，填写后支持推送） - 「⬇️ 立即拉取」手动触发同步 - 「⬆️ 推送到云端」上传本地记录到 Gist（需 Token） - 「💾 保存设置」持久化配置 3. **自动上传（保存记录时）** - 如果配置了 GitHub Token，保存记录后自动推送到 Gist - 无需手动操作 4. **UI",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.38068227767944335,
+      "maxScore": 0.38068227767944335,
+      "firstRecalledAt": "2026-05-31T09:55:56.221Z",
+      "lastRecalledAt": "2026-05-31T09:55:56.221Z",
+      "queryHashes": [
+        "9b9532dbadf4"
+      ],
+      "recallDays": [
+        "2026-05-31"
+      ],
+      "conceptTags": [
+        "access-control-allow-origin",
+        "18m",
+        "报价",
+        "计算",
+        "github",
+        "gist",
+        "同步",
+        "功能"
+      ]
+    },
+    "memory:memory/2026-05-26.md:25:57": {
+      "key": "memory:memory/2026-05-26.md:25:57",
+      "path": "memory/2026-05-26.md",
+      "startLine": 25,
+      "endLine": 57,
+      "source": "memory",
+      "snippet": "- 如果配置了 GitHub Token，保存记录后自动推送到 Gist - 无需手动操作 4. **UI 状态** - 云同步按钮根据最后同步时间显示状态 - 同步日志实时显示 **如何启用自动上传**： 1. 打开 https://github.com/settings/tokens → Generate new token (classic) 2. 只勾选 `gist` 权限 3. 复制 token → 粘贴到云同步面板的 Token 框 → 保存设置 **修改的代码**： - HTML：工具栏新增云同步按钮和设置面板 - CSS：`.btn-sm-sync`、`.sync-panel` 等样式 - JS：`syncFromCloud()`、`syncToCloud()`、`autoSyncFromCloud()`、`saveSyncSettings()` 等函数 - 页面初始化：自动调用 `autoSyncFromCloud()` - `saveRecord()`：自动触发 `syncToCloud()`（如配置了 Token） **文件**：`forging-calculator-template.html` ### 18m. 锻件报价计算器：GitHub Gist 云同步功能完成 **背景**：用户创建了 Gist 用于跨设备记录同步，要求实现自动云同步。 **Gist 信息**： - URL: https://gist.github.com/mohudeyingzi/e043c5a6fad1698b9c67508f3316ad1",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.37664465606212616,
+      "maxScore": 0.37664465606212616,
+      "firstRecalledAt": "2026-05-31T09:55:56.221Z",
+      "lastRecalledAt": "2026-05-31T09:55:56.221Z",
+      "queryHashes": [
+        "9b9532dbadf4"
+      ],
+      "recallDays": [
+        "2026-05-31"
+      ],
+      "conceptTags": [
+        "github.com/settings/tokens",
+        "btn-sm-sync",
+        "sync-panel",
+        "forging-calculator-template.html",
+        "如果",
+        "配置",
+        "github",
+        "token"
+      ]
+    },
+    "memory:memory/2026-05-26.md:51:83": {
+      "key": "memory:memory/2026-05-26.md:51:83",
+      "path": "memory/2026-05-26.md",
+      "startLine": 51,
+      "endLine": 83,
+      "source": "memory",
+      "snippet": "- Raw URL: https://gist.githubusercontent.com/mohudeyingzi/e043c5a6fad1698b9c67508f3316ad16/raw/forging_sync_records.json - CORS: `Access-Control-Allow-Origin: *` ✅ **已实现的功能**： 1. **自动拉取（页面打开时）** - 页面加载后自动 fetch Gist Raw URL 获取云端记录 - 与本地记录合并（云端优先，本地去重） - 无需任何配置，打开页面即可自动同步 2. **手动云同步面板**（工具栏「☁️ 云同步」按钮） - Raw URL 输入框（预填你的 Gist 链接） - Token 输入框（选填，填写后支持推送） - 「⬇️ 立即拉取」手动触发同步 - 「⬆️ 推送到云端」上传本地记录到 Gist（需 Token） - 「💾 保存设置」持久化配置 3. **自动上传（保存记录时）** - 如果配置了 GitHub Token，保存记录后自动推送到 Gist - 无需手动操作 4. **UI 状态** - 云同步按钮根据最后同步时间显示状态 - 同步日志实时显示 **如何启用自动上传**： 1. 打开 https://github.com/settings/tokens → Generate new token (classic) 2. 只勾选 `gist` 权限 3. 复制 token → 粘贴到云同步面板",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3721346855163574,
+      "maxScore": 0.3721346855163574,
+      "firstRecalledAt": "2026-05-31T09:55:56.221Z",
+      "lastRecalledAt": "2026-05-31T09:55:56.221Z",
+      "queryHashes": [
+        "9b9532dbadf4"
+      ],
+      "recallDays": [
+        "2026-05-31"
+      ],
+      "conceptTags": [
+        "access-control-allow-origin",
+        "github.com/settings/tokens",
+        "raw",
+        "url",
+        "https",
+        "gist",
+        "githubusercontent",
+        "com"
+      ]
+    },
+    "memory:memory/2026-05-26.md:77:107": {
+      "key": "memory:memory/2026-05-26.md:77:107",
+      "path": "memory/2026-05-26.md",
+      "startLine": 77,
+      "endLine": 107,
+      "source": "memory",
+      "snippet": "1. 打开 https://github.com/settings/tokens → Generate new token (classic) 2. 只勾选 `gist` 权限 3. 复制 token → 粘贴到云同步面板的 Token 框 → 保存设置 **修改的代码**： - HTML：工具栏新增云同步按钮和设置面板 - CSS：`.btn-sm-sync`、`.sync-panel` 等样式 - JS：`syncFromCloud()`、`syncToCloud()`、`autoSyncFromCloud()`、`saveSyncSettings()` 等函数 - 页面初始化：自动调用 `autoSyncFromCloud()` - `saveRecord()`：自动触发 `syncToCloud()`（如配置了 Token） **文件**：`forging-calculator-template.html` --- ### 18n. 云同步 Token 配置与验证 - 用户提供了 GitHub Personal Access Token（gist 权限） - Token 已设为 `loadSyncConfig()` 的默认值，打开页面即可自动推送 - 通过 curl 直接 PATCH Gist API 验证 Token 有效性 → HTTP 200 ✅ - 写入空数组 `[]` 到 Gist 成功，确认推送链路正常 - 完整流程：电脑保存记录 → 自动推送到 Gist → 手机打开页面自动拉取 - Token 未写入 memory（敏感信息） ### 18o",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.37182703912258147,
+      "maxScore": 0.37182703912258147,
+      "firstRecalledAt": "2026-05-31T09:55:56.221Z",
+      "lastRecalledAt": "2026-05-31T09:55:56.221Z",
+      "queryHashes": [
+        "9b9532dbadf4"
+      ],
+      "recallDays": [
+        "2026-05-31"
+      ],
+      "conceptTags": [
+        "github.com/settings/tokens",
+        "btn-sm-sync",
+        "sync-panel",
+        "forging-calculator-template.html",
+        "打开",
+        "https",
+        "github",
+        "com"
+      ]
+    },
+    "memory:memory/2026-05-30.md:258:296": {
+      "key": "memory:memory/2026-05-30.md:258:296",
+      "path": "memory/2026-05-30.md",
+      "startLine": 258,
+      "endLine": 296,
+      "source": "memory",
+      "snippet": "3. **UI 改造** - 删除 Gist Raw URL 输入框 - Token 输入框移到最上面 - 新增\"💾 保存 Token\"按钮 - 新增\"🚀 初始化云同步\"按钮 - 简化提示文案，移除过时说明 ### 使用流程 1. 用户去 GitHub 生成 Token（只需 gist 权限） 2. 在计算器页面点\"云同步\"，粘贴 Token，点\"保存 Token\" 3. 点\"初始化云同步\"，自动创建私有 Gist 4. 之后每次保存记录，自动同步到云端 5. 其他设备填同一个 Token，点\"拉取\"即可同步 ### 安全性 - Token 只存在用户浏览器 localStorage - 不上传给任何第三方 - Gist 默认私有（只有用户自己能访问） ### 部署状态 ✅ 已推送到 GitHub（commit: \"feat: 重构云同步为全自动 Token 模式，用户无需手动操作 Gist\"） ⏳ Vercel 自动重新部署中（1-2 分钟生效） ### 待用户操作 用户需要： 1. 访问 https://github.com/settings/tokens/new 生成 Token 2. 只勾选 `gist` 权限，复制 Token 3. 在 https://forging-tool.vercel.app 点\"云同步\"配置 ### 14:41 - 跨设备同步方案 - Vercel CLI已安装并登录成功 - GitHub仓库forging-tool待改为私人仓库 - 选择GitHub Gist方案实现跨设备记录同步，需配置T",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.37099660038948057,
+      "maxScore": 0.37099660038948057,
+      "firstRecalledAt": "2026-05-31T09:55:56.221Z",
+      "lastRecalledAt": "2026-05-31T09:55:56.221Z",
+      "queryHashes": [
+        "9b9532dbadf4"
+      ],
+      "recallDays": [
+        "2026-05-31"
+      ],
+      "conceptTags": [
+        "1-2",
+        "github.com/settings/tokens/new",
+        "forging-tool.vercel.app",
+        "github仓库forging-tool待改为私人仓库",
+        "改造",
+        "删除",
+        "gist",
+        "raw"
+      ]
+    },
+    "memory:memory/2026-06-01.md:19:42": {
+      "key": "memory:memory/2026-06-01.md:19:42",
+      "path": "memory/2026-06-01.md",
+      "startLine": 19,
+      "endLine": 42,
+      "source": "memory",
+      "snippet": "- 主文件：`C:\\Users\\Administrator\\.qclaw\\workspace\\forging-calculator-template.html` - 部署同步：`C:\\Users\\Administrator\\.qclaw\\workspace\\forging-deploy\\index.html` - GitHub Pages：`C:\\Users\\Administrator\\.qclaw\\workspace\\docs\\index.html` - Git 仓库：mohudeyingzi/forging-tool - GitHub commit：36049f9 ## 2026-06-01 全面代码审查 - 用户反馈「找回 Gist」按钮未出现，进行了全面代码审查 - 审查结果：所有代码完整正确，无语法错误或缺失引用 - 按钮显示逻辑：仅在 `hasToken && !hasGist` 时出现（正确行为——已有 gistId 则无需恢复） - 操作流程：开同步面板 → 填 Token → 保存 → 按钮自动出现 - Vercel 重新部署确认最新（但仍被 GFW 阻断） - GitHub Pages 仍需用户手动开启（Settings → Pages → master + /docs） ## HTML 页面结构 - 只有一个锻件计算器 HTML 文件：`forging-calculator-template.html` - 旧文件 `forging-calculator-individual-allowance.html` 已删除（无云同步功能） ### 09:2",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5168877691030502,
+      "maxScore": 0.5168877691030502,
+      "firstRecalledAt": "2026-06-02T00:42:53.074Z",
+      "lastRecalledAt": "2026-06-02T00:42:53.074Z",
+      "queryHashes": [
+        "251bb43a9f4d"
+      ],
+      "recallDays": [
+        "2026-06-02"
+      ],
+      "conceptTags": [
+        "forging-calculator-template.html",
+        "forging-deploy",
+        "index.html",
+        "mohudeyingzi/forging-tool",
+        "文件",
+        "users",
+        "administrator",
+        "qclaw"
+      ]
+    },
+    "memory:memory/2026-06-01.md:1:25": {
+      "key": "memory:memory/2026-06-01.md:1:25",
+      "path": "memory/2026-06-01.md",
+      "startLine": 1,
+      "endLine": 25,
+      "source": "memory",
+      "snippet": "# 2026-06-01 ## 锻件计算器 - 云同步找回 Gist 功能 - 为 `forging-calculator-template.html` 新增「找回 Gist」功能：用户换设备/清缓存后，填入 GitHub Token 即可一键找回之前创建的 Gist，无需访问 gist.github.com（国内打不开） - 核心函数：`findUserGists()` 调 GitHub API 拉取用户 Gist 并过滤关键字（forging/锻件），`renderGistList()` 渲染卡片，`recoverGist()` 恢复连接 - 技术细节：全局数组 `_foundGists` 暂存列表，避免内联 onclick URL 转义问题 ## Vercel 国内不可用 - `forging-tool.vercel.app` 返回 000（GFW 阻断），curl/IWR 均无法访问 - 已部署 GitHub Pages 备用：`docs/index.html` 推至 `mohudeyingzi/forging-tool` master 分支 - 用户需手动开启 Pages：Settings → Pages → Source: master + /docs folder - 预计地址：https://mohudeyingzi.github.io/forging-tool/ - 如果 github.io 也被墙，直接用本地文件：`C:\\Users\\Administrator\\.qclaw\\workspace\\forging-calculator-template.",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5001842409372329,
+      "maxScore": 0.5001842409372329,
+      "firstRecalledAt": "2026-06-02T00:42:53.074Z",
+      "lastRecalledAt": "2026-06-02T00:42:53.074Z",
+      "queryHashes": [
+        "251bb43a9f4d"
+      ],
+      "recallDays": [
+        "2026-06-02"
+      ],
+      "conceptTags": [
+        "forging-calculator-template.html",
+        "用户换设备/清缓存后",
+        "gist.github.com",
+        "forging/锻件",
+        "forging-tool.vercel.app",
+        "curl/iwr",
+        "docs/index.html",
+        "mohudeyingzi/forging-tool"
+      ]
+    },
+    "memory:memory/2026-05-29.md:1:45": {
+      "key": "memory:memory/2026-05-29.md:1:45",
+      "path": "memory/2026-05-29.md",
+      "startLine": 1,
+      "endLine": 45,
+      "source": "memory",
+      "snippet": "## 2026-05-29 GitHub Pages 部署锻件计算器 ### 任务 将锻件计算器 HTML 文件部署到 GitHub Pages，实现任意设备在线访问。 ### 用户信息 - GitHub 用户名：`mohudeyingzi` - GitHub 邮箱：`yuan.hongjun@hotmail.com` - 期望：自定义仓库名，永久访问地址 ### 进度 1. ✅ Git 已安装 2. ✅ SSH 密钥已生成（ed25519） 3. ⏳ 等待用户添加 SSH 公钥到 GitHub 4. ⏳ 等待用户确认仓库名 ### SSH 公钥 ``` ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMQEOYNo3pUO/Ve4P1ZgVZZHEIsaxGzPw2GPARcjkhJa yuan.hongjun@hotmail.com ``` ### 下一步 用户完成以下两步后继续部署： 1. 添加 SSH 公钥到 https://github.com/settings/ssh/new 2. 确认仓库名（访问地址格式：`https://mohudeyingzi.github.io/仓库名/`） ### 文件位置 `C:\\Users\\Administrator\\.qclaw\\workspace\\forging-calculator-template.html` ### 16:17 - GitHub Pages部署 - 计划将锻件计算器HTML部署到GitHub Pages实现云端永久访问，用户GitHub用户名mohudeyingz",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4958628177642822,
+      "maxScore": 0.4958628177642822,
+      "firstRecalledAt": "2026-06-02T00:42:53.074Z",
+      "lastRecalledAt": "2026-06-02T00:42:53.074Z",
+      "queryHashes": [
+        "251bb43a9f4d"
+      ],
+      "recallDays": [
+        "2026-06-02"
+      ],
+      "conceptTags": [
+        "yuan.hongjun",
+        "hotmail.com",
+        "ssh-ed25519",
+        "github.com/settings/ssh/new",
+        "mohudeyingzi.github.io/仓库名",
+        "forging-calculator-template.html",
+        "github",
+        "pages"
+      ]
+    },
+    "memory:memory/2026-05-30.md:1:48": {
+      "key": "memory:memory/2026-05-30.md:1:48",
+      "path": "memory/2026-05-30.md",
+      "startLine": 1,
+      "endLine": 48,
+      "source": "memory",
+      "snippet": "# 2026-05-30 工作日志 ### 09:59 - 仓库名确认 - GitHub Pages部署，用户确认仓库名为forging-tool，访问地址为https://mohudeyingzi.github.io/forging-tool/ - 待SSH连接验证通过后继续部署 ## 2026-05-30 GitHub Pages 部署锻件计算器 ### 任务 将锻件计算器 HTML 文件部署到 GitHub Pages，实现任意设备在线访问。 ### 用户信息 - GitHub 用户名：`mohudeyingzi` - GitHub 邮箱：`yuan.hongjun@hotmail.com` - 仓库名：`forging-tool` - 访问地址：`https://mohudeyingzi.github.io/forging-tool/` ### 进度 1. ✅ Git 已安装并配置 2. ✅ SSH 密钥已生成（ed25519） 3. ✅ ssh-agent 已启动并加载密钥 4. ⏳ 等待用户添加正确的 SSH 公钥到 GitHub ### SSH 公钥（当前有效） ``` ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDdox71nJ28evZEgXLOJ5QC7Fu03SAJdBxDPm7rrpa/z yuan.hongjun@hotmail.com ``` ### 问题记录 - 用户之前添加的公钥与当前电脑上的密钥不匹配 - 需要用户重新添加当前公钥到 https://github.com/settings/ssh/",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4749746978282928,
+      "maxScore": 0.4749746978282928,
+      "firstRecalledAt": "2026-06-02T00:42:53.074Z",
+      "lastRecalledAt": "2026-06-02T00:42:53.074Z",
+      "queryHashes": [
+        "251bb43a9f4d"
+      ],
+      "recallDays": [
+        "2026-06-02"
+      ],
+      "conceptTags": [
+        "用户确认仓库名为forging-tool",
+        "yuan.hongjun",
+        "hotmail.com",
+        "forging-tool",
+        "ssh-agent",
+        "ssh-ed25519",
+        "github.com/settings/ssh",
+        "工作"
+      ]
+    },
+    "memory:memory/2026-05-30.md:76:112": {
+      "key": "memory:memory/2026-05-30.md:76:112",
+      "path": "memory/2026-05-30.md",
+      "startLine": 76,
+      "endLine": 112,
+      "source": "memory",
+      "snippet": "4. ✅ HTML 文件已提交 5. ✅ 代码已推送到 GitHub: `git@github.com:mohudeyingzi/forging-tool.git` ### 用户问答记录 - **Q**: 能不能改成私人的？ - **A**: GitHub Pages 免费账号只支持公开仓库，设成私人就无法访问网页。已建议用户选择 Public。 ### 等待用户操作 访问 https://github.com/mohudeyingzi/forging-tool/settings/pages： 1. Source 选 `Deploy from a branch` 2. Branch 选 `main` 和 `/ (root)` 3. 点 Save ### 访问地址 https://mohudeyingzi.github.io/forging-tool/ ### 文件位置 `C:\\Users\\Administrator\\.qclaw\\workspace\\forging-calculator-template.html` → 已部署为 `index.html` --- ## 2026-05-30 11:03 - 部署完成，等待开启 GitHub Pages ### 已完成步骤 1. ✅ Git 配置完成 2. ✅ SSH 密钥生成并添加到 GitHub 3. ✅ SSH 连接验证成功 4. ✅ 本地仓库初始化：`C:\\Users\\Administrator\\.qclaw\\workspace\\forging-tool\\` 5. ✅ 移除 HTML 中硬编码的 GitHub",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4684763222932815,
+      "maxScore": 0.4684763222932815,
+      "firstRecalledAt": "2026-06-02T00:42:53.074Z",
+      "lastRecalledAt": "2026-06-02T00:42:53.074Z",
+      "queryHashes": [
+        "251bb43a9f4d"
+      ],
+      "recallDays": [
+        "2026-06-02"
+      ],
+      "conceptTags": [
+        "github.com",
+        "mohudeyingzi/forging-tool.git",
+        "forging-calculator-template.html",
+        "index.html",
+        "forging-tool",
+        "html",
+        "文件",
+        "提交"
+      ]
+    },
+    "memory:memory/2026-05-30.md:169:214": {
+      "key": "memory:memory/2026-05-30.md:169:214",
+      "path": "memory/2026-05-30.md",
+      "startLine": 169,
+      "endLine": 214,
+      "source": "memory",
+      "snippet": "- 待用户将GitHub仓库设为私人后，安装Vercel CLI完成私有部署 --- ## 2026-05-30 13:02 - Vercel 部署遇到问题 ### 问题 用户在新 PowerShell 终端运行 `vercel login` 时报错： ``` vercel : 无法将\"vercel\"项识别为 cmdlet、函数、脚本文件或可运行程序的名称 ``` ### 原因 新终端 PATH 未加载 npm 全局路径，找不到 vercel 命令 ### 解决方案 用完整路径调用： ```powershell & \"C:\\Users\\Administrator\\AppData\\Roaming\\QClaw\\npm-global\\vercel.ps1\" login ``` ### 当前状态 ⏳ 等待用户在终端完成 Vercel 登录（选择 GitHub 方式） --- ## 2026-05-30 13:10 - Vercel 部署成功 ### 部署结果 ✅ Vercel 登录成功（GitHub 授权方式） ✅ 部署成功：`https://forging-tool.vercel.app` ### 部署信息 - **生产 URL**：https://forging-tool.vercel.app - **Production**：https://forging-tool-git-master-mohudeyingzi.vercel.app - **项目名**：forging-tool - **所属账号**：mohudeyingzi（Vercel） ### 后续建议",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.4634861588478088,
+      "maxScore": 0.4634861588478088,
+      "firstRecalledAt": "2026-06-02T00:42:53.074Z",
+      "lastRecalledAt": "2026-06-02T00:42:53.074Z",
+      "queryHashes": [
+        "251bb43a9f4d"
+      ],
+      "recallDays": [
+        "2026-06-02"
+      ],
+      "conceptTags": [
+        "npm-global",
+        "vercel.ps1",
+        "forging-tool.vercel.app",
+        "forging-tool",
+        "用户",
+        "github",
+        "仓库",
+        "私人"
+      ]
+    }
+  }
+}

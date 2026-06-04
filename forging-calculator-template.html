@@ -339,6 +339,10 @@ body.dark .batch-bar{background:#fbbf24;color:#0f172a}
 .batch-bar .batch-del:hover{background:#fecaca}
 .batch-bar .batch-exp{background:#dbeafe;color:var(--accent)}
 .batch-bar .batch-exp:hover{background:#bfdbfe}
+/* rec checkbox and clone button */
+.rec-cb{cursor:pointer;width:16px;height:16px}
+.rec-table .btn-sm-export{background:#fef3c7;color:#b45309}
+.rec-table .btn-sm-export:hover{background:#fde68a}
 
 </style>
 </head>
@@ -919,6 +923,7 @@ function renderRecords(){
       return '<div style="font-size:10px;line-height:1.4">'+line+'</div>';
     }).join('');
     html+='<tr>'+
+      '<td style="width:30px"><input type="checkbox" class="rec-cb" value="'+r.id+'" onclick="event.stopPropagation();updateBatchUI()"></td>'+
       '<td class="rec-date">'+r.date.substring(0,16)+'</td>'+
       '<td class="rec-cust">'+(r.customer||'-')+'</td>'+
       '<td class="rec-name">'+(r.product||'-')+'</td>'+
@@ -931,6 +936,7 @@ function renderRecords(){
       '<td>'+r.qty+'</td><td>'+r.unitPrice+'</td><td class="rec-price">'+r.totalPrice+'</td>'+
       '<td class=\"rec-actions\">'+
       '<button class="btn-sm btn-sm-load" onclick="loadRecord('+r.id+')" title="加载此记录到计算器">加载</button> '+
+      '<button class="btn-sm btn-sm-export" onclick="cloneRecord('+r.id+')" title="复制">复制</button> '+
       '<button class="btn-sm btn-sm-print" onclick="printSavedRecord('+r.id+')" title="打印此清单">打印</button> '+
       '<button class="btn-sm btn-sm-del" onclick="deleteRecord('+r.id+')" title="删除此记录">删除</button>'+
       '</td></tr>';
@@ -1518,12 +1524,13 @@ function changePwd(){
   var n2=prompt('请再次输入新密码：');
   if(n1!==n2){alert('两次密码不一致！');return;}
   try{localStorage.setItem('forging_calc_pwd',hashPwd(n1));}catch(e){}
-  alert('密码修改成功！注意：自定义密码仅在本浏览器有效，换设备仍需默认密码');
+  alert('密码修改成功！注意：自定义密码仅在本浏览器有效，换设备仍需默认密码。建议记住新密码！');
 }
 
 window.onload=function(){
   var stored=null;
   try{stored=localStorage.getItem('forging_calc_pwd');}catch(e){}
+  document.getElementById('pwdSubtitle').textContent=stored?'您设置了自定义密码':'默认密码: 123456';
   document.getElementById('pwdTitle').textContent='请输入访问密码';
   document.getElementById('pwdInput').focus();
 };

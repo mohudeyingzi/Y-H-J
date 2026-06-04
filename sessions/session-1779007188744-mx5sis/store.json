@@ -1,9 +1,9 @@
 {
   "id": "session-1779007188744-mx5sis",
-  "name": "云同步重构",
+  "name": "隐私清理改",
   "status": "active",
   "createdAt": "2026-05-17T08:47:38.654Z",
-  "updatedAt": "2026-05-31T09:23:27.386Z",
+  "updatedAt": "2026-06-04T01:46:06.099Z",
   "agents": [
     {
       "id": "agent_v1y6lh9h",
@@ -17,9 +17,9 @@
   ],
   "summary": {
     "id": "summary_m3fm2j86",
-    "title": "云同步重构",
+    "title": "隐私清理改",
     "createdAt": "2026-05-17T08:47:38.654Z",
     "file": "summary_m3fm2j86.md"
   },
-  "lastMessageCount": 499
+  "lastMessageCount": 639
 }
