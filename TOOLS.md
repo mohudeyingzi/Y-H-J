@@ -47,7 +47,7 @@ Add whatever helps you do your job. This is your cheat sheet.
 | 名称 | 地址 | 备注 |
 |------|------|------|
 | GitHub Pages | https://mohudeyingzi.github.io/Y-H-J/ | ✅ 仓库已公开，master/docs 自动部署 |
-| Vercel | https://forging-tool.vercel.app | 🚫 国内被墙，国外可用（需在 Vercel 控制台改名） |
+| Vercel | https://y-h-j.vercel.app | 🚫 国内被墙，国外可用 |
 | 本地文件 | C:\Users\Administrator\.qclaw\workspace\forging-calculator-template.html | ✅ 双击即可用 |
 
 ### GitHub 相关
@@ -70,4 +70,4 @@ Add whatever helps you do your job. This is your cheat sheet.
 | 名称 | 地址 | 备注 |
 |------|------|------|
 | Vercel 控制台 | https://vercel.com/dashboard | 查看/管理部署 |
-| 项目详情 | https://vercel.com/yhj-s-projects/forging-tool | 需重命名项目 |
+| 项目详情 | https://vercel.com/yhj-s-projects/y-h-j | 查看部署历史 |
