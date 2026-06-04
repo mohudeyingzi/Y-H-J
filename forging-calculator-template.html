@@ -121,9 +121,11 @@ body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-se
 .rec-table .rec-model{max-width:120px;word-break:break-all;line-height:1.3}
 .rec-table .rec-dwg{max-width:100px;word-break:break-all;line-height:1.3}
 .rec-table .rec-summary{text-align:center!important;max-width:480px;min-width:260px;word-break:break-word;font-size:10px;line-height:1.4}
-.rec-table .rec-wt{color:var(--red);font-weight:600;min-width:110px}
+.rec-table .rec-wt{color:var(--red);font-weight:600;min-width:60px;font-size:11px}
 .rec-table .rec-price{color:var(--green);font-weight:600}
-.rec-table .rec-actions{white-space:nowrap}
+.rec-table .rec-qty{min-width:36px;font-size:11px}
+.rec-table .rec-up{min-width:50px;font-size:11px}
+.rec-table .rec-actions{display:grid;grid-template-columns:1fr 1fr;gap:2px;min-width:90px}
 .btn-sm{padding:5px 11px;border:none;border-radius:5px;font-size:11px;cursor:pointer;margin:1px}
 .btn-sm-print{background:#e0e7ff;color:var(--accent)}
 .btn-sm-print:hover{background:#c7d2fe}
@@ -933,11 +935,11 @@ function renderRecords(){
       '<td class="rec-summary">'+summaryHtml+'</td>'+
       '<td class="rec-wt" style="font-size:10px"><div>精:'+(r.finishedWeight||'-')+'</div><div>论毛坯:'+(r.theoryBlankWeight||'-')+'</div><div>实毛坯:'+(r.actualBlankWeight||'-')+'</div></td>'+
       '<td class="rec-wt">'+(r.actualFinalWeight||r.actualWeight||'-')+'</td>'+
-      '<td>'+r.qty+'</td><td>'+r.unitPrice+'</td><td class="rec-price">'+r.totalPrice+'</td>'+
+      '<td class="rec-qty">'+r.qty+'</td><td class="rec-up">'+r.unitPrice+'</td><td class="rec-price">'+r.totalPrice+'</td>'+
       '<td class=\"rec-actions\">'+
-      '<button class="btn-sm btn-sm-load" onclick="loadRecord('+r.id+')" title="加载此记录到计算器">加载</button> '+
-      '<button class="btn-sm btn-sm-export" onclick="cloneRecord('+r.id+')" title="复制">复制</button> '+
-      '<button class="btn-sm btn-sm-print" onclick="printSavedRecord('+r.id+')" title="打印此清单">打印</button> '+
+      '<button class="btn-sm btn-sm-load" onclick="loadRecord('+r.id+')" title="加载此记录到计算器">加载</button>'+
+      '<button class="btn-sm btn-sm-print" onclick="printSavedRecord('+r.id+')" title="打印此清单">打印</button>'+
+      '<button class="btn-sm btn-sm-export" onclick="cloneRecord('+r.id+')" title="复制">复制</button>'+
       '<button class="btn-sm btn-sm-del" onclick="deleteRecord('+r.id+')" title="删除此记录">删除</button>'+
       '</td></tr>';
   });
